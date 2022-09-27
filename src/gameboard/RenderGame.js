@@ -38,10 +38,12 @@ const RenderGame = (callback) => {
   }
   function create() {
     buttons = this.input.keyboard;
+    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //32
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT); //37
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.UP); //38
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT); //39
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN); //40
+    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.C); //67
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.X); //88
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
 

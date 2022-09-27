@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import store from '../store';
 import Bullet from './playerBullets/Bullet.js';
+import Enemy from './enemy/Enemy.js';
 
 class MainScene extends Phaser.Scene {
   constructor() {
@@ -12,6 +13,7 @@ class MainScene extends Phaser.Scene {
     this.bullets = [];
     this.enemies = [];
     this.reload = 0;
+    this.enemyInterval = 0;
   }
 
   preload() {
@@ -70,26 +72,26 @@ class MainScene extends Phaser.Scene {
     // this.bullet.create();
     // this.bullet.move();
 
-    this.physics.add.overlap(this.player, this.bullets, this.collision);
     // this.bullets.create(this.player.x, this.player.y, 'bullet');
     // console.log(this.bullet);
 
     // zaku = this.physics.add.sprite(200, 0, 'zaku');
-    // this.zaku = this.physics.add.group();
+    this.enemy = this.physics.add.group();
+    this.enemyBullet = this.physics.add.group();
     // this.zaku.create(100, 0, 'zaku');
     // this.zaku.create(200, 0, 'zaku');
     // this.zaku.create(300, 0, 'zaku');
     // this.zaku.create(400, 0, 'zaku');
     // this.physics.add.overlap(this.player, this.zaku, this.collision);
     // this.zaku.setVelocityY(50);
+
+    this.physics.add.collider(this.enemy, this.bullets, this.collision);
   }
 
-  // collision(player, zaku) {
-  //   zaku.disableBody(true, true);
-  //   store.dispatch({type: 'INC'});
-  // }
-
-  collision(player, bullet) {
+  collision(enemy, bullet) {
+    console.log(enemy);
+    console.log(bullet);
+    enemy.disableBody(true, true);
     bullet.disableBody(true, true);
     store.dispatch({type: 'INC'});
   }
@@ -137,10 +139,19 @@ class MainScene extends Phaser.Scene {
 
     if (this.buttons.keys[90].isDown && this.reload <= 0) {
       this.reload = 50;
-      new Bullet({scene: this, x: this.player.x - 10, y: this.player.y + 300, key:'bullet', group: this.bullets});
-      new Bullet({scene: this, x: this.player.x + 10, y: this.player.y + 300, key:'bullet', group: this.bullets});
+      new Bullet({scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets});
+      new Bullet({scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets});
     }
+
+    if (this.enemyInterval > 0) {
+      this.enemyInterval--;
+    } else {
+      this.enemyInterval = Math.floor(Math.random() * 200 + 200);
+      new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, key: 'zaku', group: this.enemy, bulletGroup: this.enemyBullet});
+    }
+
   }
+
 
 }
 

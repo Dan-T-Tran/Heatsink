@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import store from '../store';
+import MainScene from './MainScene.js';
 
 const RenderGame = (callback) => {
 
@@ -16,101 +17,127 @@ const RenderGame = (callback) => {
         debug: false,
       }
     },
-    scene: {
-      preload: preload,
-      create: create,
-      update: update
-    }
+    // scene: {
+    //   preload: preload,
+    //   create: create,
+    //   update: update
+    // }
+    scene: [MainScene],
   };
   const game = new Phaser.Game(config);
 
-  let player;
-  let buttons;
-  let speed = 200;
-  let speedMultiplier = 1;
+  // let player;
+  // let buttons;
+  // let speed = 200;
+  // let speedMultiplier = 1;
+  // let zaku;
 
-  function preload() {
-    //"this" refers to the scene in config
-    this.load.image('space', './assets/space.jpg');
-    this.load.image('forest', './assets/forest.jpg');
-    this.load.spritesheet('gundam', './assets/gundam-sprites.png',
-    { frameWidth: 34, frameHeight: 37});
+  // function preload() {
+  //   //"this" refers to the scene in config
+  //   this.load.image('space', './assets/space.jpg');
+  //   this.load.image('forest', './assets/forest.jpg');
+  //   this.load.spritesheet('gundam', './assets/gundam-sprites.png',
+  //   { frameWidth: 34, frameHeight: 37});
+  //   this.load.image('zaku', './assets/zaku.png');
+  //   this.load.image('bullet', './assets/bullet.png');
+  //   this.load.image('enemyBullet', './assets/enemyBullet.png');
 
-  }
-  function create() {
-    // Set up the usable keys
-    buttons = this.input.keyboard;
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //32
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //32
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT); //37
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.UP); //38
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT); //39
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN); //40
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.C); //67
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.X); //88
-    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
+  // }
+  // function create() {
+  //   // Set up the usable keys
+  //   buttons = this.input.keyboard;
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //32
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //32
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT); //37
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.UP); //38
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT); //39
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN); //40
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.C); //67
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.X); //88
+  //   buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
 
-    // Set up the base player properties
-    player = this.physics.add.sprite(200, 400, 'gundam');
-    player.setCollideWorldBounds(true);
+  //   // Set up the base player properties
+  //   player = this.physics.add.sprite(200, 400, 'gundam');
+  //   player.setCollideWorldBounds(true);
 
-    this.anims.create({
-      key: 'left',
-      frames: [ {key: 'gundam', frame: 2}],
-      frameRate: 20,
-    })
+  //   this.anims.create({
+  //     key: 'left',
+  //     frames: [ {key: 'gundam', frame: 2}],
+  //     frameRate: 20,
+  //   })
 
-    this.anims.create({
-      key: 'front',
-      frames: [ {key: 'gundam', frame: 0}],
-      frameRate: 20,
-    })
+  //   this.anims.create({
+  //     key: 'front',
+  //     frames: [ {key: 'gundam', frame: 0}],
+  //     frameRate: 20,
+  //   })
 
-    this.anims.create({
-      key: 'right',
-      frames: [ {key: 'gundam', frame: 1}],
-      frameRate: 20,
-    })
+  //   this.anims.create({
+  //     key: 'right',
+  //     frames: [ {key: 'gundam', frame: 1}],
+  //     frameRate: 20,
+  //   })
 
-  }
+  //   // zaku = this.physics.add.sprite(200, 0, 'zaku');
+  //   // zaku = this.physics.add.group();
+  //   // zaku.create(100, 0, 'zaku');
+  //   // zaku.create(200, 0, 'zaku');
+  //   // zaku.create(300, 0, 'zaku');
+  //   // zaku.create(400, 0, 'zaku');
+  //   // this.physics.add.overlap(player, zaku, collision);
+  //   // zaku.setVelocityY(50);
+  // }
 
-  function update() {
-    // Move the player. If no arrow keys pressed, stop movement.
-    player.setVelocity(0);
-    player.anims.play('front');
-    if (buttons.keys[16].isDown) {
-      speedMultiplier = 0.5;
-    } else {
-      speedMultiplier = 1;
-    }
-    for (let i = 37; i <= 40; i++) {
-      if (buttons.keys[i].isDown) {
-        switch (i) {
-          case 37:
-            player.setVelocityX(-speed * speedMultiplier);
-            player.anims.play('left');
-            break;
-          case 39:
-            player.setVelocityX(speed * speedMultiplier);
-            player.anims.play('right');
-            break;
-          case 38:
-            player.setVelocityY(-speed * speedMultiplier);
-            break;
-          case 40:
-            player.setVelocityY(speed * speedMultiplier);
-            break;
-          default:
-            break;
-        }
-      }
-    }
+  // // function collision(player, zaku) {
+  // //   zaku.disableBody(true, true);
+  // //   store.dispatch({type: 'INC'});
+  // // }
+
+  // function update() {
+  //   // Move the player. If no arrow keys pressed, stop movement.
+  //   // While shift is held, slow movement
+  //   player.setVelocity(0);
+  //   player.anims.play('front');
+  //   if (buttons.keys[16].isDown) {
+  //     speedMultiplier = 0.5;
+  //   } else {
+  //     speedMultiplier = 1;
+  //   }
+  //   for (let i = 37; i <= 40; i++) {
+  //     if (buttons.keys[i].isDown) {
+  //       switch (i) {
+  //         case 37:
+  //           player.setVelocityX(-speed * speedMultiplier);
+  //           player.anims.play('left');
+  //           break;
+  //         case 39:
+  //           player.setVelocityX(speed * speedMultiplier);
+  //           player.anims.play('right');
+  //           break;
+  //         case 38:
+  //           player.setVelocityY(-speed * speedMultiplier);
+  //           break;
+  //         case 40:
+  //           player.setVelocityY(speed * speedMultiplier);
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //     }
+  //   }
 
 
-  }
+  // }
 }
 
 export default RenderGame;
+
+
+
+
+
+
+
 
 /*
 KEY CODES:
@@ -126,7 +153,8 @@ https://github.com/photonstorm/phaser/blob/v3.51.0/src/input/keyboard/keys/KeyCo
 /*
 BASICALLY: TO INTEGRATE PHASER STATES INTO REACT STATES TO PROVIDE REAL-TIME INFO ON THE SIDE:
 
-import state from
+import state from redux
+dispatch with {type: ###}
 */
 
 

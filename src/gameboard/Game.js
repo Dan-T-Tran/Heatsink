@@ -8,12 +8,7 @@ const Game = () => {
   // const [health, setHealth] = useState(100);
 
   const handleScore = (number) => {
-    setScore(score);
-    // console.log('SCORE', number);
-    // setShow(false);
   }
-
-  // useEffect(() => {console.log(score)}, [score]);
 
   return (
     <div id='game'>

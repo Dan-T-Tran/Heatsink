@@ -1,15 +1,21 @@
 import Phaser from 'phaser';
 import store from '../store';
+import Bullet from './playerBullets/Bullet.js';
 
 class MainScene extends Phaser.Scene {
   constructor() {
-    super('MainScene');
+    super('MainScene'); // Doesn't do anything, but it's needed to prevent breaking due to "extends"
     this.speedMultiplier = 1;
     this.speed = 200;
+    this.player = null;
+    this.buttons = null;
+    this.bullets = [];
+    this.enemies = [];
+    this.reload = 0;
   }
 
   preload() {
-    //"this" refers to the scene in config
+    // "this" refers to the scene
     this.load.image('space', './assets/space.jpg');
     this.load.image('forest', './assets/forest.jpg');
     this.load.spritesheet('gundam', './assets/gundam-sprites.png',
@@ -54,6 +60,20 @@ class MainScene extends Phaser.Scene {
       frameRate: 20,
     })
 
+    // for (let i = 0; i <= 5; i++) {
+    //   this.bullets.push(new Bullet({scene: this, x: i * 100, y: 300, key:'bullet'}))
+    // }
+    // this.bullet = new Bullet({scene: this, x: this.player.x, y: this.player.y, key:'bullet'});
+
+    this.bullets = this.physics.add.group();
+    // this.bullet = new Bullet({scene: this, x: this.player.x, y: this.player.y + 300, key:'bullet', group: this.bullets});
+    // this.bullet.create();
+    // this.bullet.move();
+
+    this.physics.add.overlap(this.player, this.bullets, this.collision);
+    // this.bullets.create(this.player.x, this.player.y, 'bullet');
+    // console.log(this.bullet);
+
     // zaku = this.physics.add.sprite(200, 0, 'zaku');
     // this.zaku = this.physics.add.group();
     // this.zaku.create(100, 0, 'zaku');
@@ -68,6 +88,15 @@ class MainScene extends Phaser.Scene {
   //   zaku.disableBody(true, true);
   //   store.dispatch({type: 'INC'});
   // }
+
+  collision(player, bullet) {
+    bullet.disableBody(true, true);
+    store.dispatch({type: 'INC'});
+  }
+
+  shoot() {
+
+  }
 
   update() {
     // Move the player. If no arrow keys pressed, stop movement.
@@ -101,8 +130,22 @@ class MainScene extends Phaser.Scene {
         }
       }
     }
+
+    if (this.reload > 0) {
+      this.reload--;
+    }
+
+    if (this.buttons.keys[90].isDown && this.reload <= 0) {
+      this.reload = 50;
+      new Bullet({scene: this, x: this.player.x - 10, y: this.player.y + 300, key:'bullet', group: this.bullets});
+      new Bullet({scene: this, x: this.player.x + 10, y: this.player.y + 300, key:'bullet', group: this.bullets});
+    }
   }
+
 }
 
 
 export default MainScene;
+
+// this.bg_sound = this.sound.add('KEY')
+// this.bg_sound.play()

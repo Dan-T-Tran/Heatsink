@@ -7,7 +7,7 @@ const Board = ({ handleScore }) => {
 
   useEffect(() => {
 
-    RenderGame(handleScore);
+    RenderGame();
 
     return function cleanup() { //remove canvas when React component unmounts
       const canvas = document.getElementsByTagName('canvas')[0];

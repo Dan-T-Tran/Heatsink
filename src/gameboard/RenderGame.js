@@ -26,7 +26,8 @@ const RenderGame = (callback) => {
 
   let player;
   let buttons;
-  let speed = 80;
+  let speed = 200;
+  let speedMultiplier = 1;
 
   function preload() {
     //"this" refers to the scene in config
@@ -37,7 +38,9 @@ const RenderGame = (callback) => {
 
   }
   function create() {
+    // Set up the usable keys
     buttons = this.input.keyboard;
+    buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //32
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //32
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT); //37
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.UP); //38
@@ -47,6 +50,7 @@ const RenderGame = (callback) => {
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.X); //88
     buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
 
+    // Set up the base player properties
     player = this.physics.add.sprite(200, 400, 'gundam');
     player.setCollideWorldBounds(true);
 
@@ -67,31 +71,34 @@ const RenderGame = (callback) => {
       frames: [ {key: 'gundam', frame: 1}],
       frameRate: 20,
     })
-    // this.add.image(0, 0, 'forest').setOrigin(0, 0);
 
   }
 
   function update() {
-    // console.log(buttons);
-
+    // Move the player. If no arrow keys pressed, stop movement.
     player.setVelocity(0);
     player.anims.play('front');
+    if (buttons.keys[16].isDown) {
+      speedMultiplier = 0.5;
+    } else {
+      speedMultiplier = 1;
+    }
     for (let i = 37; i <= 40; i++) {
       if (buttons.keys[i].isDown) {
         switch (i) {
           case 37:
-            player.setVelocityX(-speed);
+            player.setVelocityX(-speed * speedMultiplier);
             player.anims.play('left');
             break;
           case 39:
-            player.setVelocityX(speed);
+            player.setVelocityX(speed * speedMultiplier);
             player.anims.play('right');
             break;
           case 38:
-            player.setVelocityY(-speed);
+            player.setVelocityY(-speed * speedMultiplier);
             break;
           case 40:
-            player.setVelocityY(speed);
+            player.setVelocityY(speed * speedMultiplier);
             break;
           default:
             break;

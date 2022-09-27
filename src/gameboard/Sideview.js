@@ -8,3 +8,6 @@ const Sideview = () => {
 };
 
 export default Sideview;
+
+//transparent component
+//should render at the right side of the parent game component

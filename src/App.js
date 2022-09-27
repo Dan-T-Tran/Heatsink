@@ -1,11 +1,19 @@
 import './App.css';
 import Game from './gameboard/Game.js';
 // import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 function App() {
+  const counter = useSelector((state) => state.counter);
+  const dispatch = useDispatch();
 
+  const increment = () => {
+    dispatch({type:'INC'});
+  }
   return (
     <div className="App" >
+      <h1> {counter} </h1>
+      <button onClick={increment}>Increment</button>
       <Game />
     </div>
   );

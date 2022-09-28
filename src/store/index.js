@@ -8,7 +8,15 @@ const reducerFn = (state = {
 }, action) => {
 
   if (action.type === 'INC') {
-    return {counter: state.counter + 1};
+    return ({...state, counter: state.counter + 1});
+  }
+
+  if (action.type === 'SCORE') {
+    return ({...state, score: state.score + 10});
+  }
+
+  if (action.type === 'HURT') {
+    return ({...state, health: state.health - 10});
   }
 
   return state;

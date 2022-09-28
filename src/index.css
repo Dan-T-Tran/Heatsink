@@ -38,3 +38,23 @@ code {
   width: 720px;
   background: url('../public/assets/space.jpg');
 } */
+
+.healthBar {
+  height: 20px;
+  width: 200px;
+
+  color: #FFF;
+  background: #000;
+  border-style:solid;
+  border-color:#CCC;
+  border-width: 0 0 0 1px;
+  box-shadow: 2px 2px 2px #555, inset 0 25px 20px -10px rgba(255, 255, 255, 0.3),
+      inset 0 -15px 20px -10px rgba(0, 0, 0, 0.15);
+  -webkit-transition: background-color .5s ease-in-out;
+
+  transition: 1s;
+}
+
+.healthBarOverlay {
+
+}

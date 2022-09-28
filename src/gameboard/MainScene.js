@@ -10,10 +10,13 @@ class MainScene extends Phaser.Scene {
     this.speed = 200;
     this.player = null;
     this.buttons = null;
-    this.bullets = [];
+    this.bullets = null;
+    this.bulletStorage = [];
     this.enemies = [];
     this.reload = 0;
     this.enemyInterval = 0;
+
+    this.enemyHit = this.enemyHit.bind(this);
   }
 
   preload() {
@@ -85,19 +88,35 @@ class MainScene extends Phaser.Scene {
     // this.physics.add.overlap(this.player, this.zaku, this.collision);
     // this.zaku.setVelocityY(50);
 
-    this.physics.add.collider(this.enemy, this.bullets, this.collision);
+    this.physics.add.overlap(this.enemy, this.bullets, this.enemyHit);
+    this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
   }
 
-  collision(enemy, bullet) {
-    console.log(enemy);
-    console.log(bullet);
-    enemy.disableBody(true, true);
-    bullet.disableBody(true, true);
-    store.dispatch({type: 'INC'});
+  enemyHit(enemy, bullet) {
+    enemy.destroy();
+    Phaser.Utils.Array.Remove(this.enemies, enemy);
+    bullet.destroy();
+    store.dispatch({type: 'SCORE'});
+  }
+
+  playerHit(player, enemyBullet) {
+    enemyBullet.disableBody(true, true);
+    store.dispatch({type: 'HURT'});
   }
 
   shoot() {
+    if (this.reload > 0) {
+      return;
+    }
+    this.reload = 50;
 
+    let bullet;
+    bullet = new Bullet({scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet'}, this.bullets);
+    this.bullets.add(bullet);
+    bullet.move();
+    bullet = new Bullet({scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet'}, this.bullets);
+    this.bullets.add(bullet);
+    bullet.move();
   }
 
   update() {
@@ -137,17 +156,19 @@ class MainScene extends Phaser.Scene {
       this.reload--;
     }
 
-    if (this.buttons.keys[90].isDown && this.reload <= 0) {
-      this.reload = 50;
-      new Bullet({scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets});
-      new Bullet({scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets});
+    if (this.buttons.keys[90].isDown) {
+      this.shoot();
     }
 
     if (this.enemyInterval > 0) {
       this.enemyInterval--;
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200);
-      new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, key: 'zaku', group: this.enemy, bulletGroup: this.enemyBullet});
+      Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, key: 'zaku', group: this.enemy}, this.enemy));
+    }
+
+    for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].shoot({scene: this, key: 'enemyBullet'}, this.enemyBullet);
     }
 
   }

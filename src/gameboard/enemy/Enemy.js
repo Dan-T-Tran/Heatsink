@@ -12,6 +12,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocityY(300);
     this.setAcceleration(0, -200);
     this.health = config.health;
+    this.score = 200;
     this.bounce = 50;
     this.leave = 400;
 

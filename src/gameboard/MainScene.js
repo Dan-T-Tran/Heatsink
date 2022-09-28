@@ -99,8 +99,9 @@ class MainScene extends Phaser.Scene {
     this.sounds.enemyDamage = this.sound.add('enemyDamage');
     this.sounds.enemyDeath = this.sound.add('enemyDeath');
 
-    // this.sounds.bgm.play.loop = true;
-    // this.sounds.bgm.play();
+    // this.sounds.bgm.volume = 0.2;
+    this.sounds.bgm.play.loop = true;
+    this.sounds.bgm.play();
 
     // this.sounds.enemyDeath.loop = true;
     // this.sounds.enemyDeath.play();
@@ -147,7 +148,7 @@ class MainScene extends Phaser.Scene {
     let emitter = particles.createEmitter({
       speed: 20,
       scale: { start: 0.3, end: 0 },
-      blendMode: 'add',
+      blendMode: 'ADD',
     })
 
     emitter.startFollow(this.player);
@@ -177,7 +178,7 @@ class MainScene extends Phaser.Scene {
       if (removed) {
         this.sounds.enemyDeath.play();
         bullet.destroy();
-        store.dispatch({type: 'score'});
+        store.dispatch({type: 'score', payload: Math.floor(enemy.score * (store.getState().heat ** 1.25))});
       }
     }
   }
@@ -209,7 +210,9 @@ class MainScene extends Phaser.Scene {
     if (this.reload > 0) {
       return;
     }
-    this.reload = Math.floor(30 - ((store.getState().heat - 1) * 5));
+
+    let heat = store.getState().heat;
+    this.reload = Math.floor(30 - ((heat - 1) * 7));
 
     let bullet;
 
@@ -372,7 +375,6 @@ class MainScene extends Phaser.Scene {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].move();
       let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
-      // console.log(bullet);
       this.despawn(this.enemies[i], this.enemies);
       if (bullet) {
         let particles = this.add.particles('enemyBullet');

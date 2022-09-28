@@ -19,7 +19,13 @@ const reducerFn = (state = {
   }
 
   if (action.type === 'score') {
-    return ({...state, score: state.score + 10});
+    let score = state.score;
+    if (state.score + action.payload > 999999999999999) {
+      score = 999999999999999;
+    } else {
+      score = state.score + action.payload;
+    }
+    return ({...state, score: score});
   }
 
   if (action.type === 'hurt') {
@@ -34,7 +40,11 @@ const reducerFn = (state = {
   }
 
   if (action.type === 'cooldown') {
-    return ({...state, cooldown: state.cooldown - 0.1 > 0 ? state.cooldown - 0.1 : 0});
+    let cooldown = state.cooldown - (0.3 - ((0.2 * ((state.heat - 1) / 2)) ** 1.1));
+    if (cooldown < 0) {
+      cooldown = 0;
+    }
+    return ({...state, cooldown: cooldown});
   }
 
   if (action.type === 'resetCooldown') {
@@ -49,6 +59,10 @@ const reducerFn = (state = {
       heat = heat + action.payload;
     }
     return ({...state, heat: heat});
+  }
+
+  if (action.type === 'bomb') {
+    return ({...state, heat: 1});
   }
 
   return state;

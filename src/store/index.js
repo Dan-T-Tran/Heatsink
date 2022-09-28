@@ -14,14 +14,15 @@ const reducerFn = (state = {
       heat: 0,
       cooldown: 100,
       difficulty: 1,
+      viewScreen: 'game',
     });
   }
 
-  if (action.type === 'SCORE') {
+  if (action.type === 'score') {
     return ({...state, score: state.score + 10});
   }
 
-  if (action.type === 'HURT') {
+  if (action.type === 'hurt') {
     return ({...state, health: state.health - 10 > 0 ? state.health - 10 : 0});
   }
 

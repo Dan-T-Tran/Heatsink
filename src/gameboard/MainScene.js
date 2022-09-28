@@ -3,12 +3,41 @@ import store from '../store';
 import Bullet from './playerBullets/Bullet.js';
 import Enemy from './enemy/Enemy.js';
 
+/*
+TODO:
+Add blocking mechanic
+  Add appropriate heat mechanic and scaling
+
+Add game over screen
+Implement score submission in game over screen
+Implement back-end for score submission
+
+Add leaderboard somewhere
+  With time: on a title screen
+  With no time: on the sidebar
+
+Implement back-end for leaderboard GET
+  If title screen: when title screen loads
+  If sidebar: when sidebar loads
+
+EXTRAS:
+
+Credit screen (can delegate to the README)
+Extra enemy types
+Extra bullet types
+Difficulty scaling
+Maybe a boss somewhere in there
+Graphic indicator for blocking cooldown instead of text indicator (partial circle?)
+Find more sprites?
+*/
+
 class MainScene extends Phaser.Scene {
   constructor() {
     super('MainScene'); // Doesn't do anything, but it's needed to prevent breaking due to "extends"
     this.speedMultiplier = 1;
     this.speed = 200;
     this.player = null;
+    this.blocker = null;
     this.invulnerable = 0;
     this.buttons = null;
     this.bullet = null;
@@ -18,10 +47,12 @@ class MainScene extends Phaser.Scene {
     this.reload = 0;
     this.enemyInterval = 0;
     this.sounds = {};
+    this.circle = null;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.despawn = this.despawn.bind(this);
     this.playerHit = this.playerHit.bind(this);
+    this.cooldownCircle = this.cooldownCircle.bind(this);
   }
 
   preload() {
@@ -61,8 +92,8 @@ class MainScene extends Phaser.Scene {
     this.sounds.enemyDamage = this.sound.add('enemyDamage');
     this.sounds.enemyDeath = this.sound.add('enemyDeath');
 
-    this.sounds.bgm.play.loop = true;
-    this.sounds.bgm.play();
+    // this.sounds.bgm.play.loop = true;
+    // this.sounds.bgm.play();
 
     // this.sounds.enemyDeath.loop = true;
     // this.sounds.enemyDeath.play();
@@ -92,28 +123,11 @@ class MainScene extends Phaser.Scene {
       frameRate: 20,
     })
 
-    // for (let i = 0; i <= 5; i++) {
-    //   this.bullets.push(new Bullet({scene: this, x: i * 100, y: 300, key:'bullet'}))
-    // }
-    // this.bullet = new Bullet({scene: this, x: this.player.x, y: this.player.y, key:'bullet'});
+    this.blocker = this.physics.add.sprite(this.player.x, this.player.y - 30, 'zaku');
 
     this.bullet = this.physics.add.group();
-    // this.bullet = new Bullet({scene: this, x: this.player.x, y: this.player.y + 300, key:'bullet', group: this.bullets});
-    // this.bullet.create();
-    // this.bullet.move();
-
-    // this.bullets.create(this.player.x, this.player.y, 'bullet');
-    // console.log(this.bullet);
-
-    // zaku = this.physics.add.sprite(200, 0, 'zaku');
     this.enemy = this.physics.add.group();
     this.enemyBullet = this.physics.add.group();
-    // this.zaku.create(100, 0, 'zaku');
-    // this.zaku.create(200, 0, 'zaku');
-    // this.zaku.create(300, 0, 'zaku');
-    // this.zaku.create(400, 0, 'zaku');
-    // this.physics.add.overlap(this.player, this.zaku, this.collision);
-    // this.zaku.setVelocityY(50);
 
     this.physics.add.overlap(this.enemy, this.bullet, this.enemyHit);
     this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
@@ -123,16 +137,20 @@ class MainScene extends Phaser.Scene {
     let emitter = particles.createEmitter({
       speed: 20,
       scale: { start: 0.3, end: 0 },
-      blendMode: 'ADD',
+      blendMode: 'add',
     })
 
     emitter.startFollow(this.player);
     this.player.on('destroy', () => {
+      emitter.explode(600);
       this.sounds.death.play();
-      emitter.speedX.propertyValue = 100;
+      emitter.gravityY = 300;
+      emitter.speedX.propertyValue = 200;
       emitter.scaleX.start = 3;
-      emitter.explode(350);
+      emitter.explode(800);
     });
+
+    this.circle = this.add.graphics();
   }
 
   enemyHit(enemy, bullet) {
@@ -149,7 +167,7 @@ class MainScene extends Phaser.Scene {
       if (removed) {
         this.sounds.enemyDeath.play();
         bullet.destroy();
-        store.dispatch({type: 'SCORE'});
+        store.dispatch({type: 'score'});
       }
     }
   }
@@ -167,7 +185,7 @@ class MainScene extends Phaser.Scene {
       this.player.alpha = 0.5;
     }
 
-    store.dispatch({type: 'HURT'});
+    store.dispatch({type: 'hurt'});
     //figure out how to do dynamic bullet damage to player health
     if (store.getState().health <= 0) {
       player.destroy();
@@ -217,14 +235,46 @@ class MainScene extends Phaser.Scene {
     // make blocker
   }
 
+  blockMove() {
+    this.blocker.disableBody(true, true);
+    // this.blocker.enableBody(false, null, null, true, true);
+    this.physics.moveToObject(this.blocker, this.player, 60, 10);
+  }
+
+  cooldownCircle() {
+    let cooldown = store.getState().cooldown;
+    let startAngle = Phaser.Math.DegToRad(-90);
+    let finalAngle = Phaser.Math.DegToRad(359.9 * (1 - cooldown / 100) - 90);
+    this.circle.lineStyle(cooldown <= 0 ? 4 : 2, cooldown <= 0 ? 0xffffff : 0xc0c0c0, 1);
+    this.circle.beginPath();
+    this.circle.arc(this.player.x, this.player.y, 50, startAngle, finalAngle, false);
+    this.circle.strokePath();
+  }
+
   update() {
+    this.circle.clear();
 
     if (store.getState().health <= 0) {
       return;
     }
 
-    if (store.getState().cooldown >= 0) {
+    if (store.getState().cooldown > 0) {
       store.dispatch({type: 'cooldown'})
+      if (store.getState().cooldown <= 0) {
+        this.sounds.invulnerability.play();
+        //change this sound later
+      }
+    }
+
+    this.blockMove();
+    this.cooldownCircle();
+
+    if (this.buttons.keys[88].isDown) {
+      if (store.getState().cooldown > 0) {
+        return;
+      }
+
+      this.block();
     }
 
     if (this.invulnerable > 0) {

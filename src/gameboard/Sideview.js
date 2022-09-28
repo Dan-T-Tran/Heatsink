@@ -24,7 +24,7 @@ const Sideview = () => {
       <h1>Score: {renderScore()}</h1>
       <h1>Health: {health}</h1>
       {renderHealthBar()}
-      <h1>Heat: {heat}%</h1>
+      <h1>Heat: {Math.floor(heat * 100)}%</h1>
       <h1>Cooldown: {Math.floor(cooldown)}</h1>
     </div>
   );

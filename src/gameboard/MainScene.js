@@ -64,6 +64,8 @@ class MainScene extends Phaser.Scene {
     this.load.image('zaku', './assets/zaku.png');
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
+    this.load.image('shield', './assets/shield.png');
+
     this.load.audio('bgm', './assets/music/bgm.mp3');
     this.load.audio('damage', './assets/sound/se_tan00.wav');
     this.load.audio('invulnerability', './assets/sound/se_plst00.wav');
@@ -123,7 +125,9 @@ class MainScene extends Phaser.Scene {
       frameRate: 20,
     })
 
-    this.blocker = this.physics.add.sprite(this.player.x, this.player.y - 30, 'zaku');
+    this.blocker = this.physics.add.sprite(this.player.x, this.player.y - 30, 'shield');
+    this.blocker.scale = 0.4;
+    this.blocker.disableBody(true, true);
 
     this.bullet = this.physics.add.group();
     this.enemy = this.physics.add.group();
@@ -131,6 +135,7 @@ class MainScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.enemy, this.bullet, this.enemyHit);
     this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
+    this.physics.add.overlap(this.blocker, this.enemyBullet, this.blockHit);
 
     let particles = this.add.particles('enemyBullet');
 
@@ -173,6 +178,7 @@ class MainScene extends Phaser.Scene {
   }
 
   playerHit(player, enemyBullet) {
+    enemyBullet.disableBody(true, true);
     enemyBullet.destroy();
 
     if (this.invulnerable > 0) {
@@ -231,14 +237,27 @@ class MainScene extends Phaser.Scene {
   }
 
   block() {
-    // render blocking animation and functionality here?
-    // make blocker
+    this.blocker.enableBody(false, null, null, true, true);
+
+    const disable = () => {
+      this.blocker.disableBody(true, true);
+      store.dispatch({type: 'resetCooldown'});
+    }
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: disable
+    });
   }
 
   blockMove() {
-    this.blocker.disableBody(true, true);
-    // this.blocker.enableBody(false, null, null, true, true);
-    this.physics.moveToObject(this.blocker, this.player, 60, 10);
+    this.blocker.y = this.player.y - 20;
+    this.blocker.x = this.player.x;
+  }
+
+  blockHit(blocker, enemyBullet) {
+    store.dispatch({type: 'block', payload: enemyBullet.damage / 100});
+    enemyBullet.destroy();
   }
 
   cooldownCircle() {
@@ -269,11 +288,7 @@ class MainScene extends Phaser.Scene {
     this.blockMove();
     this.cooldownCircle();
 
-    if (this.buttons.keys[88].isDown) {
-      if (store.getState().cooldown > 0) {
-        return;
-      }
-
+    if (this.buttons.keys[88].isDown && store.getState().cooldown <= 0) {
       this.block();
     }
 
@@ -351,7 +366,22 @@ class MainScene extends Phaser.Scene {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].move();
       let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
+      // console.log(bullet);
       this.despawn(this.enemies[i], this.enemies);
+      if (bullet) {
+        let particles = this.add.particles('enemyBullet');
+        let emitter = particles.createEmitter({
+          speed: 5,
+          lifespan: 500,
+          scale: { start: 0, end: 0 },
+          blendMode: 'ADD',
+        })
+        emitter.startFollow(bullet);
+        bullet.on('destroy', () => {
+          emitter.scaleX.start = 0.25;
+          emitter.explode(150);
+        });
+      }
     }
 
   }

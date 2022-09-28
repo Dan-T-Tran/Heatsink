@@ -23,7 +23,14 @@ const reducerFn = (state = {
   }
 
   if (action.type === 'hurt') {
-    return ({...state, health: state.health - 10 > 0 ? state.health - 10 : 0});
+    let health = state.health;
+    let damage = action.payload;
+    if (health - damage > 0) {
+      health = Math.floor(health - damage);
+    } else {
+      health = 0;
+    }
+    return ({...state, health: health});
   }
 
   if (action.type === 'cooldown') {

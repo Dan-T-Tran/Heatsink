@@ -184,14 +184,16 @@ class MainScene extends Phaser.Scene {
     if (this.invulnerable > 0) {
       return;
     }
+
+    let state = store.getState();
     //hardcoded damage right now, change to dynamic
-    if (store.getState().health - 10 > 0) {
+    if (state.health - (enemyBullet.damage * (state.heat ** 1.5)) > 0) {
       this.sounds.damage.play();
       this.invulnerable = 200;
       this.player.alpha = 0.5;
     }
 
-    store.dispatch({type: 'hurt'});
+    store.dispatch({type: 'hurt', payload: enemyBullet.damage * (state.heat ** 1.5)});
     //figure out how to do dynamic bullet damage to player health
     if (store.getState().health <= 0) {
       player.destroy();

@@ -5,6 +5,13 @@ const reducerFn = (state = {
   health: 100,
   cooldown: 100
 }, action) => {
+  if (action.type === 'initialize') {
+    return ({...state,
+      score: 0,
+      health: 100,
+      cooldown: 100
+    });
+  }
 
   if (action.type === 'SCORE') {
     return ({...state, score: state.score + 10});

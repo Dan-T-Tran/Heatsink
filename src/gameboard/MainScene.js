@@ -17,6 +17,7 @@ class MainScene extends Phaser.Scene {
     this.enemyInterval = 0;
 
     this.enemyHit = this.enemyHit.bind(this);
+    this.despawn = this.despawn.bind(this);
   }
 
   preload() {
@@ -94,9 +95,15 @@ class MainScene extends Phaser.Scene {
 
   enemyHit(enemy, bullet) {
     enemy.destroy();
-    Phaser.Utils.Array.Remove(this.enemies, enemy);
-    bullet.destroy();
-    store.dispatch({type: 'SCORE'});
+    // checking for single shot enemies right now.
+    // figure out how to do enemies with more than 1 hp
+    let removed = Phaser.Utils.Array.Remove(this.enemies, enemy);
+
+    if (removed) {
+      bullet.destroy();
+      store.dispatch({type: 'SCORE'});
+    }
+
   }
 
   playerHit(player, enemyBullet) {
@@ -120,6 +127,10 @@ class MainScene extends Phaser.Scene {
     bullet = new Bullet({scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet'}, this.bullets);
     this.bullets.add(bullet);
     bullet.move();
+  }
+
+  despawn() {
+
   }
 
   update() {

@@ -7,9 +7,15 @@ class EnemyBullet extends Phaser.Physics.Arcade.Sprite {
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);
     config.group.add(this);
+
+
   }
 
-
+  destroy() {
+    // const ding = this.destroy();
+    // setTimeout(() => ding(), 1000)
+    // setTimeout(() => console.log(this), 1000)
+  }
 };
 
 export default EnemyBullet;

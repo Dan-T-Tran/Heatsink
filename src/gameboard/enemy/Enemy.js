@@ -26,6 +26,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.reload = 500;
     let bullet = new EnemyBullet({ ...config, x: this.x, y: this.y });
     bullet.setVelocityY(300);
+    bullet.destroy();
     return bullet;
   }
 

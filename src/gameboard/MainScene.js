@@ -11,9 +11,10 @@ class MainScene extends Phaser.Scene {
     this.player = null;
     this.invulnerable = 0;
     this.buttons = null;
-    this.bullets = null;
-    this.bulletStorage = [];
+    this.bullet = null;
+    this.bullets = [];
     this.enemies = [];
+    this.enemybullets = [];
     this.reload = 0;
     this.enemyInterval = 0;
 
@@ -36,7 +37,7 @@ class MainScene extends Phaser.Scene {
   create() {
     // Set up the usable keys
     this.buttons = this.input.keyboard;
-    this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //32
+    this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //16
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //32
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT); //37
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.UP); //38
@@ -73,7 +74,7 @@ class MainScene extends Phaser.Scene {
     // }
     // this.bullet = new Bullet({scene: this, x: this.player.x, y: this.player.y, key:'bullet'});
 
-    this.bullets = this.physics.add.group();
+    this.bullet = this.physics.add.group();
     // this.bullet = new Bullet({scene: this, x: this.player.x, y: this.player.y + 300, key:'bullet', group: this.bullets});
     // this.bullet.create();
     // this.bullet.move();
@@ -91,17 +92,23 @@ class MainScene extends Phaser.Scene {
     // this.physics.add.overlap(this.player, this.zaku, this.collision);
     // this.zaku.setVelocityY(50);
 
-    this.physics.add.overlap(this.enemy, this.bullets, this.enemyHit);
+    this.physics.add.overlap(this.enemy, this.bullet, this.enemyHit);
     this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
 
     let particles = this.add.particles('enemyBullet');
 
-    particles.createEmitter({
+    let emitter = particles.createEmitter({
       speed: 20,
       scale: { start: 0.3, end: 0 },
       blendMode: 'ADD',
-      follow: this.player,
     })
+
+    emitter.startFollow(this.player);
+    this.player.on('destroy', () => {
+      emitter.speedX.propertyValue = 100;
+      emitter.scaleX.start = 3;
+      emitter.explode(350);
+    });
   }
 
   enemyHit(enemy, bullet) {
@@ -114,6 +121,7 @@ class MainScene extends Phaser.Scene {
       bullet.destroy();
       store.dispatch({type: 'SCORE'});
     }
+    console.log(enemy);
 
   }
 
@@ -132,7 +140,7 @@ class MainScene extends Phaser.Scene {
     store.dispatch({type: 'HURT'});
     //figure out how to do dynamic bullet damage to player health
     if (store.getState().health <= 0) {
-      console.log('yer done');
+      player.destroy();
     }
   }
 
@@ -144,20 +152,32 @@ class MainScene extends Phaser.Scene {
 
     let bullet;
 
-    if (this.buttons.keys[32].isDown) {
-      bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
-      bullet.move();
-      bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
-      bullet.move();
+    if (this.buttons.keys[16].isDown) {
+      bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+      bullet.move(0, -400);
+      bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+      bullet.move(0, -400);
     } else {
-      bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
-      bullet.move();
-      bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
-      bullet.move();
+      bullet = new Bullet({ scene: this, x: this.player.x, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+      bullet.move(-250, -400);
+      bullet = new Bullet({ scene: this, x: this.player.x, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+      bullet.move(250, -400);
     }
   }
 
-  despawn() {
+  despawn(entity, array) {
+    if (
+      entity.x < -1000 ||
+      entity.x > this.sys.game.scale.gameSize._width + 1000 ||
+      entity.y < -1000 ||
+      entity.y > this.sys.game.scale.gameSize._height + 1000
+      )
+    {
+      entity.destroy();
+      if (array) {
+        Phaser.Utils.Array.Remove(array, entity);
+      }
+    }
     // despawn enemies and bullets once they're out of bounds far enough
     // if low on time, just despawn once they hit the canvas edges or something
   }
@@ -168,6 +188,11 @@ class MainScene extends Phaser.Scene {
   }
 
   update() {
+
+    if (store.getState().health <= 0) {
+      return;
+    }
+
     if (this.invulnerable > 0) {
       this.invulnerable--;
     }
@@ -240,7 +265,8 @@ class MainScene extends Phaser.Scene {
 
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].move();
-      this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
+      let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
+      this.despawn(this.enemies[i], this.enemies);
     }
 
   }

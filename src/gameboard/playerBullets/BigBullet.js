@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-class Bullet extends Phaser.Physics.Arcade.Sprite {
+class BigBullet extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y, config.key);
     // this.scene = config.scene;
@@ -11,8 +11,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     // this.dy = -100;
     // this.bullet = config.group.create(config.x, config.y, config.key);
     // this.bullet.setVelocityY(this.dy);
-    this.damage = 5;
-    this.scale = 2;
+    this.damage = 50;
+    this.scale = 3;
     this.setTexture(config.key);
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);
@@ -32,4 +32,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
   }
 };
 
-export default Bullet;
+export default BigBullet;
+
+//Phaser.GameObjects.Sprite

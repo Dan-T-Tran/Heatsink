@@ -24,7 +24,8 @@ code {
   margin: 50px auto;
   padding-left: 30px;
   padding-top: 30px;
-  background-color: gray;
+  /* background-color: gray; */
+  background: url('../public/assets/spaceboard.jpg');
 }
 
 #sideview {
@@ -33,11 +34,11 @@ code {
   background-color: rgb(224, 204, 204);
 }
 
-/* #board {
+#board {
   height: 960px;
   width: 720px;
   background: url('../public/assets/space.jpg');
-} */
+}
 
 .healthBar {
   height: 20px;

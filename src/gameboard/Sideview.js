@@ -4,6 +4,7 @@ const Sideview = () => {
   const health = useSelector((state) => state.health);
   const score = useSelector((state) => state.score);
   const heat = useSelector((state) => state.heat);
+  const cooldown = useSelector((state) => state.cooldown);
 
   const renderHealthBar = () => {
     let gradient = `linear-gradient(to right, teal, teal ${health}%, gray ${health}%)`;
@@ -18,6 +19,7 @@ const Sideview = () => {
       <h1>Health: {health}</h1>
       {renderHealthBar()}
       <h1>Heat: {heat}%</h1>
+      <h1>Cooldown: {Math.floor(cooldown)}</h1>
     </div>
   );
 };

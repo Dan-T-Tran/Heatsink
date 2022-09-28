@@ -25,6 +25,10 @@ const reducerFn = (state = {
     return ({...state, health: state.health - 10 > 0 ? state.health - 10 : 0});
   }
 
+  if (action.type === 'cooldown') {
+    return ({...state, cooldown: state.cooldown - 0.1 > 0 ? state.cooldown - 0.1 : 0});
+  }
+
   return state;
 
 }

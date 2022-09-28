@@ -112,17 +112,20 @@ class MainScene extends Phaser.Scene {
   }
 
   enemyHit(enemy, bullet) {
-    enemy.destroy();
-    // checking for single shot enemies right now.
-    // figure out how to do enemies with more than 1 hp
-    let removed = Phaser.Utils.Array.Remove(this.enemies, enemy);
-
-    if (removed) {
+    enemy.health -= bullet.damage;
+    if (enemy.health > 0) {
       bullet.destroy();
-      store.dispatch({type: 'SCORE'});
     }
-    console.log(enemy);
 
+    if (enemy.health <= 0) {
+      enemy.destroy();
+      let removed = Phaser.Utils.Array.Remove(this.enemies, enemy);
+
+      if (removed) {
+        bullet.destroy();
+        store.dispatch({type: 'SCORE'});
+      }
+    }
   }
 
   playerHit(player, enemyBullet) {
@@ -193,6 +196,10 @@ class MainScene extends Phaser.Scene {
       return;
     }
 
+    if (store.getState().cooldown >= 0) {
+      store.dispatch({type: 'cooldown'})
+    }
+
     if (this.invulnerable > 0) {
       this.invulnerable--;
     }
@@ -251,7 +258,7 @@ class MainScene extends Phaser.Scene {
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200);
       for (let i = 0; i < Math.floor(Math.random() * 30 + 5); i++) {
-        let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy }));
+        let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 20, key: 'zaku', group: this.enemy }));
         let particles = this.add.particles('enemyBullet');
         let emitter = particles.createEmitter({
           speed: 20,

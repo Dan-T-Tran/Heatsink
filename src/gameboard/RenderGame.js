@@ -8,7 +8,7 @@ const RenderGame = () => {
     parent: 'board',
     width: 720,
     height: 960,
-    // transparent: true,
+    transparent: true,
     physics: {
       default: 'arcade',
       arcade: {

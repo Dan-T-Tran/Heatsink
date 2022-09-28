@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import store from '../store';
+import store from '../../store';
 import Bullet from './playerBullets/Bullet.js';
 import Enemy from './enemy/Enemy.js';
 
@@ -212,7 +212,7 @@ class MainScene extends Phaser.Scene {
     }
 
     let heat = store.getState().heat;
-    this.reload = Math.floor(30 - ((heat - 1) * 7));
+    this.reload = Math.floor(40 - (30 * ((heat - 1) / 2)));
 
     let bullet;
 
@@ -221,11 +221,35 @@ class MainScene extends Phaser.Scene {
       bullet.move(0, -400);
       bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullet });
       bullet.move(0, -400);
+      if (heat >= 2) {
+        bullet = new Bullet({ scene: this, x: this.player.x - 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(0, -400);
+        bullet = new Bullet({ scene: this, x: this.player.x + 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(0, -400);
+      }
+      if (heat >= 3) {
+        bullet = new Bullet({ scene: this, x: this.player.x - 20, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(0, -400);
+        bullet = new Bullet({ scene: this, x: this.player.x + 20, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(0, -400);
+      }
     } else {
       bullet = new Bullet({ scene: this, x: this.player.x, y: this.player.y - 5, key: 'bullet', group: this.bullet });
       bullet.move(-250, -400);
       bullet = new Bullet({ scene: this, x: this.player.x, y: this.player.y - 5, key: 'bullet', group: this.bullet });
       bullet.move(250, -400);
+      if (heat >= 2) {
+        bullet = new Bullet({ scene: this, x: this.player.x - 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(-250, -400);
+        bullet = new Bullet({ scene: this, x: this.player.x + 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(250, -400);
+      }
+      if (heat >= 3) {
+        bullet = new Bullet({ scene: this, x: this.player.x - 25, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(-250, -400);
+        bullet = new Bullet({ scene: this, x: this.player.x + 25, y: this.player.y - 5, key: 'bullet', group: this.bullet });
+        bullet.move(250, -400);
+      }
     }
   }
 

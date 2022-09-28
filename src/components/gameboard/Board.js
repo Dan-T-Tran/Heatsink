@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { useState, useEffect } from 'react';
-import store from '../store';
+import store from '../../store';
 import RenderGame from './RenderGame.js';
 
 const Board = ({ handleScore }) => {

@@ -48,6 +48,7 @@ class MainScene extends Phaser.Scene {
     this.enemyInterval = 0;
     this.sounds = {};
     this.circle = null;
+    this.blocking = false;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.despawn = this.despawn.bind(this);
@@ -68,6 +69,8 @@ class MainScene extends Phaser.Scene {
 
     this.load.audio('bgm', './assets/music/bgm.mp3');
     this.load.audio('damage', './assets/sound/se_tan00.wav');
+    this.load.audio('block', './assets/sound/se_powerup.wav');
+    this.load.audio('cooldown', './assets/sound/se_kira02.wav');
     this.load.audio('invulnerability', './assets/sound/se_plst00.wav');
     this.load.audio('death', './assets/sound/se_pldead00.wav');
     this.load.audio('enemyDamage', './assets/sound/se_damage00.wav');
@@ -89,6 +92,8 @@ class MainScene extends Phaser.Scene {
 
     this.sounds.bgm = this.sound.add('bgm');
     this.sounds.damage = this.sound.add('damage');
+    this.sounds.block = this.sound.add('block');
+    this.sounds.cooldown = this.sound.add('cooldown');
     this.sounds.invulnerability = this.sound.add('invulnerability');
     this.sounds.death = this.sound.add('death');
     this.sounds.enemyDamage = this.sound.add('enemyDamage');
@@ -204,7 +209,7 @@ class MainScene extends Phaser.Scene {
     if (this.reload > 0) {
       return;
     }
-    this.reload = 30;
+    this.reload = Math.floor(30 - ((store.getState().heat - 1) * 5));
 
     let bullet;
 
@@ -239,9 +244,11 @@ class MainScene extends Phaser.Scene {
   }
 
   block() {
+    this.sounds.block.play();
+    this.blocking = true;
     this.blocker.enableBody(false, null, null, true, true);
-
     const disable = () => {
+      this.blocking = false;
       this.blocker.disableBody(true, true);
       store.dispatch({type: 'resetCooldown'});
     }
@@ -282,15 +289,14 @@ class MainScene extends Phaser.Scene {
     if (store.getState().cooldown > 0) {
       store.dispatch({type: 'cooldown'})
       if (store.getState().cooldown <= 0) {
-        this.sounds.invulnerability.play();
-        //change this sound later
+        this.sounds.cooldown.play();
       }
     }
 
     this.blockMove();
     this.cooldownCircle();
 
-    if (this.buttons.keys[88].isDown && store.getState().cooldown <= 0) {
+    if (this.buttons.keys[88].isDown && store.getState().cooldown <= 0 && !this.blocking) {
       this.block();
     }
 
@@ -302,9 +308,7 @@ class MainScene extends Phaser.Scene {
         this.player.alpha = 1;
       }
     }
-    // if (store.getState().health > 0) {
-    //   let emitter = new Emitter(this, this.player.x, this.player.y);
-    // }
+
     // Move the player. If no arrow keys pressed, stop movement.
     // While shift is held, slow movement
     this.player.setVelocity(0);

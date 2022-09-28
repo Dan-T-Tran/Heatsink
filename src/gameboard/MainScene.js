@@ -9,6 +9,7 @@ class MainScene extends Phaser.Scene {
     this.speedMultiplier = 1;
     this.speed = 200;
     this.player = null;
+    this.invulnerable = false;
     this.buttons = null;
     this.bullets = null;
     this.bulletStorage = [];
@@ -18,6 +19,7 @@ class MainScene extends Phaser.Scene {
 
     this.enemyHit = this.enemyHit.bind(this);
     this.despawn = this.despawn.bind(this);
+    this.playerHit = this.playerHit.bind(this);
   }
 
   preload() {
@@ -94,6 +96,8 @@ class MainScene extends Phaser.Scene {
   }
 
   enemyHit(enemy, bullet) {
+    // console.log(enemy);
+    console.log(bullet);
     enemy.destroy();
     // checking for single shot enemies right now.
     // figure out how to do enemies with more than 1 hp
@@ -107,8 +111,18 @@ class MainScene extends Phaser.Scene {
   }
 
   playerHit(player, enemyBullet) {
-    enemyBullet.disableBody(true, true);
+    if (this.invulnerable) {
+      return;
+    }
+    //hardcoded damage right now, change to dynamic
+    if (store.getState().health - 10 > 0) {
+      this.invulnerable = true;
+      this.player.alpha = 0.5;
+    }
+
+    enemyBullet.destroy();
     store.dispatch({type: 'HURT'});
+    //figure out how to do dynamic bullet damage to player health
     if (store.getState().health <= 0) {
       console.log('yer done');
     }
@@ -121,10 +135,10 @@ class MainScene extends Phaser.Scene {
     this.reload = 50;
 
     let bullet;
-    bullet = new Bullet({scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet'}, this.bullets);
+    bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
     this.bullets.add(bullet);
     bullet.move();
-    bullet = new Bullet({scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet'}, this.bullets);
+    bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
     this.bullets.add(bullet);
     bullet.move();
   }
@@ -178,12 +192,13 @@ class MainScene extends Phaser.Scene {
       this.enemyInterval--;
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200);
-      Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, key: 'zaku', group: this.enemy}, this.enemy));
+      // let test = new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy })
+      Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy }));
     }
 
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].move();
-      this.enemies[i].shoot({scene: this, key: 'enemyBullet'}, this.enemyBullet);
+      this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
     }
 
   }

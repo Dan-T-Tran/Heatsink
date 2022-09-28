@@ -2,27 +2,27 @@ import Phaser from 'phaser';
 import EnemyBullet from './EnemyBullet.js';
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
-  constructor(config, group) {
+  constructor(config) {
     super(config.scene, config.x, config.y, config.key);
     this.scene = config.scene;
     this.setTexture(config.key);
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);
-    group.add(this);
+    config.group.add(this);
     this.setVelocityY(300);
     this.setAcceleration(0, -200);
-    console.log(this)
+    this.health = config.health;
 
     this.reload = 80;
   }
 
-  shoot(config, group) {
+  shoot(config) {
     if (this.reload > 0) {
       this.reload--;
     } else {
       this.reload = 500;
-      let bullet = new EnemyBullet({ scene: config.scene, x: this.x, y: this.y, key: config.key }, group);
-      bullet.setVelocityY(30);
+      let bullet = new EnemyBullet({ ...config, x: this.x, y: this.y });
+      bullet.setVelocityY(300);
       return bullet;
     }
   }

@@ -18,8 +18,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     config.group.add(this);
   };
 
-  move() {
-    this.setVelocityY(-100);
+  move(velocity) {
+    this.setVelocityY(-400);
   }
 
   update() {

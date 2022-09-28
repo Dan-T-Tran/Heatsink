@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 const Sideview = () => {
   const health = useSelector((state) => state.health);
   const score = useSelector((state) => state.score);
+  const heat = useSelector((state) => state.heat);
 
   const renderHealthBar = () => {
     let gradient = `linear-gradient(to right, teal, teal ${health}%, gray ${health}%)`;
@@ -13,9 +14,10 @@ const Sideview = () => {
 
   return (
     <div id='sideview'>
+      <h1>Score: {score}</h1>
       <h1>Health: {health}</h1>
       {renderHealthBar()}
-      <h1>Score: {score}</h1>
+      <h1>Heat: {heat}%</h1>
     </div>
   );
 };

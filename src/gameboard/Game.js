@@ -1,11 +1,18 @@
 import Board from './Board.js';
 import Sideview from './Sideview.js';
-// import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+// import axios from 'axios';
 
 const Game = () => {
   // RENDER GAMEOVER/ SCORESUBMIT SCREEN ON THIS COMPONENT
   // GET STATE OF WHETHER TO SHOW IT FROM REDUX
   // RENDER A TITLE SCREEN IF THERE'S TIME
+
+  // const [leaderBoard, setLeaderBoard] = useState();
+
+  useEffect(() => {
+
+  }, []);
 
   return (
     <div id='game'>

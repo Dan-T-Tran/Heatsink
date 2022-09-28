@@ -3,13 +3,17 @@ import { createStore } from 'redux';
 const reducerFn = (state = {
   score: 0,
   health: 100,
-  cooldown: 100
+  heat: 0,
+  cooldown: 100,
+  difficulty: 1
 }, action) => {
   if (action.type === 'initialize') {
     return ({...state,
       score: 0,
       health: 100,
-      cooldown: 100
+      heat: 0,
+      cooldown: 100,
+      difficulty: 1,
     });
   }
 

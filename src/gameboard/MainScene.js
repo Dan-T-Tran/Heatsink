@@ -27,7 +27,7 @@ class MainScene extends Phaser.Scene {
     this.load.image('space', './assets/space.jpg');
     this.load.image('forest', './assets/forest.jpg');
     this.load.spritesheet('gundam', './assets/gundam-sprites.png',
-    { frameWidth: 34, frameHeight: 37});
+    { frameWidth: 26, frameHeight: 31});
     this.load.image('zaku', './assets/zaku.png');
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
@@ -114,6 +114,7 @@ class MainScene extends Phaser.Scene {
       bullet.destroy();
       store.dispatch({type: 'SCORE'});
     }
+
   }
 
   playerHit(player, enemyBullet) {
@@ -142,16 +143,28 @@ class MainScene extends Phaser.Scene {
     this.reload = 50;
 
     let bullet;
-    bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
-    this.bullets.add(bullet);
-    bullet.move();
-    bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
-    this.bullets.add(bullet);
-    bullet.move();
+
+    if (this.buttons.keys[32].isDown) {
+      bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
+      bullet.move();
+      bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
+      bullet.move();
+    } else {
+      bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
+      bullet.move();
+      bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullets });
+      bullet.move();
+    }
   }
 
   despawn() {
+    // despawn enemies and bullets once they're out of bounds far enough
+    // if low on time, just despawn once they hit the canvas edges or something
+  }
 
+  block() {
+    // render blocking animation and functionality here?
+    // make blocker
   }
 
   update() {
@@ -207,16 +220,22 @@ class MainScene extends Phaser.Scene {
 
     if (this.enemyInterval > 0) {
       this.enemyInterval--;
+      if (this.enemies.length === 0 && this.enemyInterval > 30) {
+        this.enemyInterval = 10
+      }
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200);
-      let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy }));
-      // let particles = this.add.particles('enemyBullet');
-      // particles.createEmitter({
-      //   speed: 20,
-      //   scale: { start: 0.3, end: 0 },
-      //   blendMode: 'ADD',
-      //   follow: enemy,
-      // })
+      for (let i = 0; i < Math.floor(Math.random() * 30 + 5); i++) {
+        let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy }));
+        let particles = this.add.particles('enemyBullet');
+        let emitter = particles.createEmitter({
+          speed: 20,
+          scale: { start: 0.3, end: 0 },
+          blendMode: 'ADD',
+        })
+        emitter.startFollow(enemy);
+        enemy.on('destroy', () => emitter.explode(150));
+      }
     }
 
     for (let i = 0; i < this.enemies.length; i++) {

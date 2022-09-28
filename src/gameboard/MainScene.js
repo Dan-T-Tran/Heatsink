@@ -9,7 +9,7 @@ class MainScene extends Phaser.Scene {
     this.speedMultiplier = 1;
     this.speed = 200;
     this.player = null;
-    this.invulnerable = false;
+    this.invulnerable = 0;
     this.buttons = null;
     this.bullets = null;
     this.bulletStorage = [];
@@ -93,11 +93,18 @@ class MainScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.enemy, this.bullets, this.enemyHit);
     this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
+
+    let particles = this.add.particles('enemyBullet');
+
+    particles.createEmitter({
+      speed: 20,
+      scale: { start: 0.3, end: 0 },
+      blendMode: 'ADD',
+      follow: this.player,
+    })
   }
 
   enemyHit(enemy, bullet) {
-    // console.log(enemy);
-    console.log(bullet);
     enemy.destroy();
     // checking for single shot enemies right now.
     // figure out how to do enemies with more than 1 hp
@@ -107,20 +114,20 @@ class MainScene extends Phaser.Scene {
       bullet.destroy();
       store.dispatch({type: 'SCORE'});
     }
-
   }
 
   playerHit(player, enemyBullet) {
-    if (this.invulnerable) {
+    enemyBullet.destroy();
+
+    if (this.invulnerable > 0) {
       return;
     }
     //hardcoded damage right now, change to dynamic
     if (store.getState().health - 10 > 0) {
-      this.invulnerable = true;
+      this.invulnerable = 500;
       this.player.alpha = 0.5;
     }
 
-    enemyBullet.destroy();
     store.dispatch({type: 'HURT'});
     //figure out how to do dynamic bullet damage to player health
     if (store.getState().health <= 0) {
@@ -148,6 +155,16 @@ class MainScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.invulnerable > 0) {
+      this.invulnerable--;
+    }
+    if (this.invulnerable <= 0) {
+      this.invulnerable = false;
+      this.player.alpha = 1;
+    }
+    // if (store.getState().health > 0) {
+    //   let emitter = new Emitter(this, this.player.x, this.player.y);
+    // }
     // Move the player. If no arrow keys pressed, stop movement.
     // While shift is held, slow movement
     this.player.setVelocity(0);
@@ -192,8 +209,14 @@ class MainScene extends Phaser.Scene {
       this.enemyInterval--;
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200);
-      // let test = new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy })
-      Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy }));
+      let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 10, key: 'zaku', group: this.enemy }));
+      // let particles = this.add.particles('enemyBullet');
+      // particles.createEmitter({
+      //   speed: 20,
+      //   scale: { start: 0.3, end: 0 },
+      //   blendMode: 'ADD',
+      //   follow: enemy,
+      // })
     }
 
     for (let i = 0; i < this.enemies.length; i++) {

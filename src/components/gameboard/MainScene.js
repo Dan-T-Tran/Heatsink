@@ -267,8 +267,6 @@ class MainScene extends Phaser.Scene {
       entity.y > this.sys.game.scale.gameSize._height + 100
       )
     {
-      console.log(entity);
-      console.log(array);
       entity.destroy();
       if (array) {
         Phaser.Utils.Array.Remove(array, entity);

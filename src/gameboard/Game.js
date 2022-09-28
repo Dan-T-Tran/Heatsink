@@ -1,19 +1,13 @@
 import Board from './Board.js';
 import Sideview from './Sideview.js';
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 
 const Game = () => {
-  const [show, setShow] = useState(true);
-  const [score, setScore] = useState(0);
-  // const [health, setHealth] = useState(100);
-
-  const handleScore = (number) => {
-  }
 
   return (
     <div id='game'>
       <div id='board'>
-        {show && <Board handleScore={handleScore}/>}
+        <Board />
       </div>
       <Sideview />
     </div>

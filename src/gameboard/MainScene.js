@@ -102,6 +102,9 @@ class MainScene extends Phaser.Scene {
   playerHit(player, enemyBullet) {
     enemyBullet.disableBody(true, true);
     store.dispatch({type: 'HURT'});
+    if (store.getState().health <= 0) {
+      console.log('yer done');
+    }
   }
 
   shoot() {
@@ -168,6 +171,7 @@ class MainScene extends Phaser.Scene {
     }
 
     for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].move();
       this.enemies[i].shoot({scene: this, key: 'enemyBullet'}, this.enemyBullet);
     }
 

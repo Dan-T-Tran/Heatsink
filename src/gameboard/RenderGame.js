@@ -19,6 +19,7 @@ const RenderGame = () => {
     scene: [MainScene],
   };
   const game = new Phaser.Game(config);
+  return game;
 }
 
 export default RenderGame;

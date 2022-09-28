@@ -17,6 +17,7 @@ class MainScene extends Phaser.Scene {
     this.enemybullets = [];
     this.reload = 0;
     this.enemyInterval = 0;
+    this.sounds = {};
 
     this.enemyHit = this.enemyHit.bind(this);
     this.despawn = this.despawn.bind(this);
@@ -32,6 +33,12 @@ class MainScene extends Phaser.Scene {
     this.load.image('zaku', './assets/zaku.png');
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
+    this.load.audio('bgm', './assets/music/bgm.mp3');
+    this.load.audio('damage', './assets/sound/se_tan00.wav');
+    this.load.audio('invulnerability', './assets/sound/se_plst00.wav');
+    this.load.audio('death', './assets/sound/se_pldead00.wav');
+    this.load.audio('enemyDamage', './assets/sound/se_damage00.wav');
+    this.load.audio('enemyDeath', './assets/sound/se_enep00.wav');
   }
 
   create() {
@@ -46,6 +53,22 @@ class MainScene extends Phaser.Scene {
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.C); //67
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.X); //88
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
+
+    this.sounds.bgm = this.sound.add('bgm');
+    this.sounds.damage = this.sound.add('damage');
+    this.sounds.invulnerability = this.sound.add('invulnerability');
+    this.sounds.death = this.sound.add('death');
+    this.sounds.enemyDamage = this.sound.add('enemyDamage');
+    this.sounds.enemyDeath = this.sound.add('enemyDeath');
+
+    this.sounds.bgm.play.loop = true;
+    this.sounds.bgm.play();
+
+    // this.sounds.enemyDeath.loop = true;
+    // this.sounds.enemyDeath.play();
+
+    // setTimeout(() => this.sounds.enemyDeath.loop = false, 10000);
+
 
     // Set up the base player properties
     this.player = this.physics.add.sprite(200, 400, 'gundam');
@@ -105,6 +128,7 @@ class MainScene extends Phaser.Scene {
 
     emitter.startFollow(this.player);
     this.player.on('destroy', () => {
+      this.sounds.death.play();
       emitter.speedX.propertyValue = 100;
       emitter.scaleX.start = 3;
       emitter.explode(350);
@@ -114,6 +138,7 @@ class MainScene extends Phaser.Scene {
   enemyHit(enemy, bullet) {
     enemy.health -= bullet.damage;
     if (enemy.health > 0) {
+      this.sounds.enemyDamage.play();
       bullet.destroy();
     }
 
@@ -122,6 +147,7 @@ class MainScene extends Phaser.Scene {
       let removed = Phaser.Utils.Array.Remove(this.enemies, enemy);
 
       if (removed) {
+        this.sounds.enemyDeath.play();
         bullet.destroy();
         store.dispatch({type: 'SCORE'});
       }
@@ -136,7 +162,8 @@ class MainScene extends Phaser.Scene {
     }
     //hardcoded damage right now, change to dynamic
     if (store.getState().health - 10 > 0) {
-      this.invulnerable = 500;
+      this.sounds.damage.play();
+      this.invulnerable = 200;
       this.player.alpha = 0.5;
     }
 
@@ -151,7 +178,7 @@ class MainScene extends Phaser.Scene {
     if (this.reload > 0) {
       return;
     }
-    this.reload = 50;
+    this.reload = 30;
 
     let bullet;
 
@@ -202,10 +229,11 @@ class MainScene extends Phaser.Scene {
 
     if (this.invulnerable > 0) {
       this.invulnerable--;
-    }
-    if (this.invulnerable <= 0) {
-      this.invulnerable = false;
-      this.player.alpha = 1;
+      if (this.invulnerable <= 0) {
+        this.sounds.invulnerability.play();
+        this.invulnerable = false;
+        this.player.alpha = 1;
+      }
     }
     // if (store.getState().health > 0) {
     //   let emitter = new Emitter(this, this.player.x, this.player.y);

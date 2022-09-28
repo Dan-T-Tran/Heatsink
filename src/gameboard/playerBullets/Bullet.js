@@ -12,7 +12,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     // this.bullet = config.group.create(config.x, config.y, config.key);
     // this.bullet.setVelocityY(this.dy);
     this.damage = 5;
-    this.scale = 2;
     this.setTexture(config.key);
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);

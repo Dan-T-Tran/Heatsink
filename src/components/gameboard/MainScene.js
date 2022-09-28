@@ -5,9 +5,6 @@ import Enemy from './enemy/Enemy.js';
 
 /*
 TODO:
-Add blocking mechanic
-  Add appropriate heat mechanic and scaling
-
 Add game over screen
 Implement score submission in game over screen
 Implement back-end for score submission
@@ -54,6 +51,8 @@ class MainScene extends Phaser.Scene {
     this.despawn = this.despawn.bind(this);
     this.playerHit = this.playerHit.bind(this);
     this.cooldownCircle = this.cooldownCircle.bind(this);
+    this.blockHit = this.blockHit.bind(this);
+    this.shoot = this.shoot.bind(this);
   }
 
   preload() {
@@ -69,9 +68,11 @@ class MainScene extends Phaser.Scene {
 
     this.load.audio('bgm', './assets/music/bgm.mp3');
     this.load.audio('damage', './assets/sound/se_tan00.wav');
+    this.load.audio('shoot', './assets/sound/se_plst00.wav');
     this.load.audio('block', './assets/sound/se_powerup.wav');
+    this.load.audio('powerup', './assets/sound/se_power1.wav');
     this.load.audio('cooldown', './assets/sound/se_kira02.wav');
-    this.load.audio('invulnerability', './assets/sound/se_plst00.wav');
+    this.load.audio('invulnerability', './assets/sound/se_timeout.wav');
     this.load.audio('death', './assets/sound/se_pldead00.wav');
     this.load.audio('enemyDamage', './assets/sound/se_damage00.wav');
     this.load.audio('enemyDeath', './assets/sound/se_enep00.wav');
@@ -92,7 +93,9 @@ class MainScene extends Phaser.Scene {
 
     this.sounds.bgm = this.sound.add('bgm');
     this.sounds.damage = this.sound.add('damage');
+    this.sounds.shoot = this.sound.add('shoot');
     this.sounds.block = this.sound.add('block');
+    this.sounds.powerup = this.sound.add('powerup');
     this.sounds.cooldown = this.sound.add('cooldown');
     this.sounds.invulnerability = this.sound.add('invulnerability');
     this.sounds.death = this.sound.add('death');
@@ -165,7 +168,7 @@ class MainScene extends Phaser.Scene {
   }
 
   enemyHit(enemy, bullet) {
-    enemy.health -= bullet.damage * (store.getState().heat ** 1.25);
+    enemy.health -= bullet.damage * (store.getState().heat ** 1.05);
     if (enemy.health > 0) {
       this.sounds.enemyDamage.play();
       bullet.destroy();
@@ -192,7 +195,6 @@ class MainScene extends Phaser.Scene {
     }
 
     let state = store.getState();
-    //hardcoded damage right now, change to dynamic
     if (state.health - (enemyBullet.damage * (state.heat ** 1.5)) > 0) {
       this.sounds.damage.play();
       this.invulnerable = 200;
@@ -200,9 +202,13 @@ class MainScene extends Phaser.Scene {
     }
 
     store.dispatch({type: 'hurt', payload: enemyBullet.damage * (state.heat ** 1.5)});
-    //figure out how to do dynamic bullet damage to player health
     if (store.getState().health <= 0) {
       player.destroy();
+      // set time for 1 second to trigger gameover screen
+      // this.time.addEvent({
+        // delay: 1000,
+        // callback: (() => store.dispatch(type:'gameover'))
+      // });
     }
   }
 
@@ -213,8 +219,8 @@ class MainScene extends Phaser.Scene {
 
     let heat = store.getState().heat;
     this.reload = Math.floor(40 - (30 * ((heat - 1) / 2)));
-
     let bullet;
+    this.sounds.shoot.play();
 
     if (this.buttons.keys[16].isDown) {
       bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullet });
@@ -255,12 +261,14 @@ class MainScene extends Phaser.Scene {
 
   despawn(entity, array) {
     if (
-      entity.x < -1000 ||
-      entity.x > this.sys.game.scale.gameSize._width + 1000 ||
-      entity.y < -1000 ||
-      entity.y > this.sys.game.scale.gameSize._height + 1000
+      entity.x < -100 ||
+      entity.x > this.sys.game.scale.gameSize._width + 100 ||
+      entity.y < -300 ||
+      entity.y > this.sys.game.scale.gameSize._height + 100
       )
     {
+      console.log(entity);
+      console.log(array);
       entity.destroy();
       if (array) {
         Phaser.Utils.Array.Remove(array, entity);
@@ -292,7 +300,12 @@ class MainScene extends Phaser.Scene {
   }
 
   blockHit(blocker, enemyBullet) {
+    let previousHeat = store.getState().heat;
     store.dispatch({type: 'block', payload: enemyBullet.damage / 100});
+    let currentHeat = store.getState().heat;
+    if ((previousHeat < 2 && currentHeat >= 2) || (previousHeat < 3 && currentHeat >= 3)) {
+      this.sounds.powerup.play();
+    }
     enemyBullet.destroy();
   }
 
@@ -397,9 +410,12 @@ class MainScene extends Phaser.Scene {
     }
 
     for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].move();
-      let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
       this.despawn(this.enemies[i], this.enemies);
+      this.enemies[i].move();
+      for (let j = 0; j < this.enemies[i].bullets.length; j++) {
+        this.despawn(this.enemies[i].bullets[j], this.enemies[i].bullets);
+      }
+      let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
       if (bullet) {
         let particles = this.add.particles('enemyBullet');
         let emitter = particles.createEmitter({

@@ -19,15 +19,20 @@ code {
 
 #game {
   /* box-sizing: border-box; */
+  position: fixed;
   display: flex;
   flex-direction: row;
   width: 1050px;
   height: 990px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -60%);
   margin: 50px auto;
   padding-left: 30px;
   padding-top: 30px;
   /* background-color: gray; */
   background: url('../public/assets/spaceboard.jpg');
+  z-index: 3;
 }
 
 @keyframes animate {
@@ -64,4 +69,15 @@ code {
   -webkit-transition: background-color .5s ease-in-out;
 
   transition: 1s;
+}
+
+.overlay {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  right: 0;
+  background-color: black;
+  opacity: 0.2;
+  z-index: 2;
 }

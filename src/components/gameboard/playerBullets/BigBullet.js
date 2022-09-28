@@ -3,14 +3,6 @@ import Phaser from 'phaser';
 class BigBullet extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y, config.key);
-    // this.scene = config.scene;
-    // this.x = config.x;
-    // this.y = config.y;
-    // this.key = config.key;
-    // this.group = config.group;
-    // this.dy = -100;
-    // this.bullet = config.group.create(config.x, config.y, config.key);
-    // this.bullet.setVelocityY(this.dy);
     this.bigBullet = true;
     this.damage = 50;
     this.scale = 3;

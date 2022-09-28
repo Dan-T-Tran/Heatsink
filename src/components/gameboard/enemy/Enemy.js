@@ -15,6 +15,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.score = 200;
     this.bounce = 50;
     this.leave = 400;
+    this.bullets = [];
 
     this.reload = 80;
   }
@@ -24,8 +25,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.reload--;
       return;
     }
-    this.reload = 500;
-    let bullet = new EnemyBullet({ ...config, x: this.x, y: this.y });
+    this.reload = 80;
+    let bullet = Phaser.Utils.Array.Add(this.bullets, new EnemyBullet({ ...config, x: this.x, y: this.y }));
     bullet.setVelocityY(300);
     // bullet.destroy();
     return bullet;

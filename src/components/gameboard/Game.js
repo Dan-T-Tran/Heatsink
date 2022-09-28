@@ -15,12 +15,15 @@ const Game = () => {
   }, []);
 
   return (
-    <div id='game'>
-      <div id='board'>
-        <Board />
+    <>
+      <div className='overlay'></div>
+      <div id='game'>
+        <div id='board'>
+          <Board />
+        </div>
+        <Sideview />
       </div>
-      <Sideview />
-    </div>
+    </>
   );
 };
 

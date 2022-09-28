@@ -5,6 +5,7 @@ const Sideview = () => {
   const score = useSelector((state) => state.score);
   const heat = useSelector((state) => state.heat);
   const cooldown = useSelector((state) => state.cooldown);
+  const difficulty = useSelector((state) => state.difficulty);
 
   const renderScore = () => {
     let scoreStr = Math.floor(score).toString();
@@ -26,6 +27,7 @@ const Sideview = () => {
       {renderHealthBar()}
       <h1>Heat: {Math.floor(heat * 100)}%</h1>
       <h1>Cooldown: {Math.floor(cooldown)}</h1>
+      <h1>Difficulty: {difficulty}</h1>
     </div>
   );
 };

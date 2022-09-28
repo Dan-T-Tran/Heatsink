@@ -159,7 +159,7 @@ class MainScene extends Phaser.Scene {
   }
 
   enemyHit(enemy, bullet) {
-    enemy.health -= bullet.damage;
+    enemy.health -= bullet.damage * (store.getState().heat ** 1.25);
     if (enemy.health > 0) {
       this.sounds.enemyDamage.play();
       bullet.destroy();

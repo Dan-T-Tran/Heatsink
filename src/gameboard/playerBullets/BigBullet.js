@@ -11,6 +11,7 @@ class BigBullet extends Phaser.Physics.Arcade.Sprite {
     // this.dy = -100;
     // this.bullet = config.group.create(config.x, config.y, config.key);
     // this.bullet.setVelocityY(this.dy);
+    this.bigBullet = true;
     this.damage = 50;
     this.scale = 3;
     this.setTexture(config.key);

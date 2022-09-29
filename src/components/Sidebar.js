@@ -1,5 +1,3 @@
-import SideLeaderboard from './SideLeaderboard.js';
-
 const Sidebar = () => {
 
 

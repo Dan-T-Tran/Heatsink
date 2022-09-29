@@ -2,14 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const port = process.env.PORT;
+const { getScores, postScore } = require('./controllers');
 
-app.get('/', (req, res) => {
-  res.sendStatus(501);
-});
+app.use(express.json());
 
-app.post('/', (req, res) => {
-  res.sendStatus(501);
-})
+app.get('/heatsink', getScores);
+
+app.post('/heatsink', postScore);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

@@ -1,11 +1,14 @@
 import Phaser from 'phaser';
 import { useState, useEffect } from 'react';
-import store from '../../store';
+import { useSelector, useDispatch } from 'react-redux';
 import RenderGame from './RenderGame.js';
 
 const Board = ({ handleScore }) => {
+  const gameState = useSelector((state) => state.gameState);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    //set starting scores, etc
+    dispatch({type: 'initialize'});
 
     const game = RenderGame();
     return function cleanup() { //remove canvas when React component unmounts

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import EnemyBullet from './EnemyBullet.js';
+import store from '../../../store';
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
@@ -12,7 +13,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     config.group.add(this);
     this.setVelocityY(300);
     this.setAcceleration(0, -200);
-    this.health = config.health;
+    this.health = config.health + Math.floor(((store.getState().difficulty * 2) ** 1.2));
     this.score = 200;
     this.bounce = 50;
     this.leave = 400;

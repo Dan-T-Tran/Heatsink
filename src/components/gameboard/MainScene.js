@@ -33,7 +33,7 @@ class MainScene extends Phaser.Scene {
   constructor() {
     super('MainScene'); // Doesn't do anything, but it's needed to prevent breaking due to "extends"
     this.speedMultiplier = 1;
-    this.speed = 200;
+    this.speed = 300;
     this.player = null;
     this.blocker = null;
     this.invulnerable = 0;
@@ -96,6 +96,7 @@ class MainScene extends Phaser.Scene {
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.X); //88
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
 
+    // Add sounds
     this.sounds.bgm = this.sound.add('bgm');
     this.sounds.damage = this.sound.add('damage');
     this.sounds.shoot = this.sound.add('shoot');
@@ -109,8 +110,8 @@ class MainScene extends Phaser.Scene {
     this.sounds.enemyDeath = this.sound.add('enemyDeath');
 
     // this.sounds.bgm.volume = 0.2;
-    this.sounds.bgm.play.loop = true;
-    this.sounds.bgm.play();
+    // this.sounds.bgm.play.loop = true;
+    // this.sounds.bgm.play();
 
     // this.sounds.enemyDeath.loop = true;
     // this.sounds.enemyDeath.play();
@@ -140,29 +141,32 @@ class MainScene extends Phaser.Scene {
       frameRate: 20,
     })
 
+    // Set up blocker properties
+    this.circle = this.add.graphics();
     this.blocker = this.physics.add.sprite(this.player.x, this.player.y - 30, 'shield');
     this.blocker.scale = 0.4;
     this.blocker.disableBody(true, true);
 
+    // Add groups for components
     this.bullet = this.physics.add.group();
     this.bomb = this.physics.add.group();
     this.enemy = this.physics.add.group();
     this.enemyBullet = this.physics.add.group();
 
+    // Add collision logic
     this.physics.add.overlap(this.enemy, this.bullet, this.enemyHit);
     this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
     this.physics.add.overlap(this.blocker, this.enemyBullet, this.blockHit);
     this.physics.add.overlap(this.bomb, this.enemyBullet, this.bombBlock);
     this.physics.add.overlap(this.enemy, this.bomb, this.bombHit);
 
+    // Add emitter that follows player for style
     let particles = this.add.particles('enemyBullet');
-
     let emitter = particles.createEmitter({
       speed: 20,
       scale: { start: 0.3, end: 0 },
       blendMode: 'ADD',
     })
-
     emitter.startFollow(this.player);
     this.player.on('destroy', () => {
       emitter.explode(600);
@@ -173,8 +177,8 @@ class MainScene extends Phaser.Scene {
       emitter.explode(800);
     });
 
-    this.circle = this.add.graphics();
-    const difficultyTimer = this.time.addEvent({
+    // Increment difficulty every 15 seconds
+    this.time.addEvent({
       delay: 15000,
       callback: (() => store.dispatch({type: 'difficulty'})),
       repeat: 98
@@ -232,13 +236,13 @@ class MainScene extends Phaser.Scene {
     }
 
     let state = store.getState();
-    if (state.health - (enemyBullet.damage * (state.heat ** 1.5)) > 0) {
+    if (state.health - (enemyBullet.damage * (state.heat ** 1.5) * ((state.difficulty ** 1.2) / state.difficulty)) > 0) {
       this.sounds.damage.play();
       this.invulnerable = 200;
       this.player.alpha = 0.5;
     }
 
-    store.dispatch({type: 'hurt', payload: enemyBullet.damage * (state.heat ** 1.5)});
+    store.dispatch({type: 'hurt', payload: enemyBullet.damage * (state.heat ** 1.5) * ((state.difficulty ** 1.2) / state.difficulty)});
     if (store.getState().health <= 0) {
       player.destroy();
       // set time for 1 second to trigger gameover screen
@@ -442,7 +446,7 @@ class MainScene extends Phaser.Scene {
     }
 
     // Trigger enemies sooner if there's too few enemies on screen
-    if (this.enemy.children.entries.length <= 5 && this.enemyInterval > 80) {
+    if (this.enemy.children.entries.length <= 5 + (store.getState().difficulty / 3) && this.enemyInterval > 80) {
       this.enemyInterval = 30;
     }
   }

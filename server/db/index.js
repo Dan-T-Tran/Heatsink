@@ -9,4 +9,4 @@ const heatSchema = new mongoose.Schema({
   // date: String,
 });
 
-export default heatSchema;
+module.exports = heatSchema;

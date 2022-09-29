@@ -1,10 +1,11 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import SideLeaderboard from './SideLeaderboard.js';
 
 const Sideview = () => {
   const health = useSelector((state) => state.health);
   const score = useSelector((state) => state.score);
   const heat = useSelector((state) => state.heat);
-  const cooldown = useSelector((state) => state.cooldown);
+  // const cooldown = useSelector((state) => state.cooldown);
   const difficulty = useSelector((state) => state.difficulty);
 
   const renderScore = () => {

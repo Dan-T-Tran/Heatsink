@@ -5,7 +5,8 @@ const reducerFn = (state = {
   health: 100,
   heat: 1,
   cooldown: 0,
-  difficulty: 1
+  difficulty: 1,
+  gameState: 'game'
 }, action) => {
   if (action.type === 'initialize') {
     return ({...state,
@@ -14,7 +15,7 @@ const reducerFn = (state = {
       heat: 1,
       cooldown: 0,
       difficulty: 1,
-      viewScreen: 'game',
+      gameState: 'game',
     });
   }
 

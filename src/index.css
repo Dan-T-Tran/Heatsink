@@ -58,7 +58,7 @@ code {
 .healthBar {
   height: 20px;
   width: 200px;
-
+  margin: 0 auto;
   color: #FFF;
   background: #000;
   border-style:solid;

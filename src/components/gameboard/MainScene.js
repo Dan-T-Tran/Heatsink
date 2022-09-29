@@ -208,9 +208,6 @@ class MainScene extends Phaser.Scene {
 
     enemy.hitByBomb = true;
 
-    console.log('hit!');
-    console.log(enemy.health);
-
     let state = store.getState();
 
     enemy.health -= bomb.damage;

@@ -9,9 +9,6 @@ class BigBullet extends Phaser.Physics.Arcade.Sprite {
     this.bigBullet = true;
     this.damage = 50 * (state.heat ** 1.25);
     this.scale = 4 * (1.05 * ((state.heat ** 2) / state.heat));
-    console.log(state);
-    console.log(this.scale);
-    console.log(this.damage);
     this.setTexture(config.key);
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);

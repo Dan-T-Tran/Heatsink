@@ -65,6 +65,10 @@ const reducerFn = (state = {
     return ({...state, heat: 1});
   }
 
+  if (action.type === 'difficulty') {
+    return ({...state, difficulty: state.difficulty + 1 > 99 ? 99 : state.difficulty + 1});
+  }
+
   return state;
 
 }

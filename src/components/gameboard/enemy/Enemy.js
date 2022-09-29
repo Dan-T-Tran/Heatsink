@@ -16,6 +16,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.bounce = 50;
     this.leave = 400;
     this.bullets = [];
+    this.direction = config.x < this.scene.sys.game.scale.gameSize._width / 2 ? 1 : -1
 
     this.reload = 80;
   }
@@ -27,18 +28,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
     this.reload = 80;
     let bullet = Phaser.Utils.Array.Add(this.bullets, new EnemyBullet({ ...config, x: this.x, y: this.y }));
-    bullet.setVelocityY(300);
-    // bullet.destroy();
+    bullet.setVelocityY(400);
     return bullet;
   }
 
   move() {
-    let direction;
-    if (this.x < this.scene.sys.game.scale.gameSize._width / 2) {
-      direction = -1;
-    } else {
-      direction = 1;
-    }
+    // let direction;
+    // if (this.x < this.scene.sys.game.scale.gameSize._width / 2) {
+    //   direction = 1;
+    // } else {
+    //   direction = -1;
+    // }
     // console.log(this.scene.sys.game.scale.gameSize._width);
     if (this.body.velocity.y < 0 && this.body.acceleration.y < 0) {
       this.setAcceleration(0, -30);
@@ -50,8 +50,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (this.body.acceleration.y === 0 && this.leave > 0) {
       this.leave--;
     }
-    if (this.leave <= 0) {
-      this.setAcceleration(20 * direction, 0);
+    if (this.leave <= 0 && this.body.acceleration.x === 0) {
+      this.setAcceleration(20 * this.direction, 0);
     }
   }
 

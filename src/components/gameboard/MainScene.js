@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import store from '../../store';
 import Bullet from './playerBullets/Bullet.js';
+import BigBullet from './playerBullets/BigBullet.js';
 import Enemy from './enemy/Enemy.js';
 
 /*
@@ -38,6 +39,7 @@ class MainScene extends Phaser.Scene {
     this.invulnerable = 0;
     this.buttons = null;
     this.bullet = null;
+    this.bomb = null;
     this.bullets = [];
     this.enemies = [];
     this.enemybullets = [];
@@ -53,6 +55,8 @@ class MainScene extends Phaser.Scene {
     this.cooldownCircle = this.cooldownCircle.bind(this);
     this.blockHit = this.blockHit.bind(this);
     this.shoot = this.shoot.bind(this);
+    this.shootBomb = this.shootBomb.bind(this);
+    this.bombHit = this.bombHit.bind(this);
   }
 
   preload() {
@@ -69,6 +73,7 @@ class MainScene extends Phaser.Scene {
     this.load.audio('bgm', './assets/music/bgm.mp3');
     this.load.audio('damage', './assets/sound/se_tan00.wav');
     this.load.audio('shoot', './assets/sound/se_plst00.wav');
+    this.load.audio('bomb', './assets/sound/se_gun00.wav');
     this.load.audio('block', './assets/sound/se_powerup.wav');
     this.load.audio('powerup', './assets/sound/se_power1.wav');
     this.load.audio('cooldown', './assets/sound/se_kira02.wav');
@@ -94,6 +99,7 @@ class MainScene extends Phaser.Scene {
     this.sounds.bgm = this.sound.add('bgm');
     this.sounds.damage = this.sound.add('damage');
     this.sounds.shoot = this.sound.add('shoot');
+    this.sounds.bomb = this.sound.add('bomb');
     this.sounds.block = this.sound.add('block');
     this.sounds.powerup = this.sound.add('powerup');
     this.sounds.cooldown = this.sound.add('cooldown');
@@ -139,12 +145,15 @@ class MainScene extends Phaser.Scene {
     this.blocker.disableBody(true, true);
 
     this.bullet = this.physics.add.group();
+    this.bomb = this.physics.add.group();
     this.enemy = this.physics.add.group();
     this.enemyBullet = this.physics.add.group();
 
     this.physics.add.overlap(this.enemy, this.bullet, this.enemyHit);
     this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
     this.physics.add.overlap(this.blocker, this.enemyBullet, this.blockHit);
+    this.physics.add.overlap(this.bomb, this.enemyBullet, this.bombBlock);
+    this.physics.add.overlap(this.enemy, this.bomb, this.bombHit);
 
     let particles = this.add.particles('enemyBullet');
 
@@ -165,10 +174,16 @@ class MainScene extends Phaser.Scene {
     });
 
     this.circle = this.add.graphics();
+    const difficultyTimer = this.time.addEvent({
+      delay: 15000,
+      callback: (() => store.dispatch({type: 'difficulty'})),
+      repeat: 98
+    });
   }
 
   enemyHit(enemy, bullet) {
-    enemy.health -= bullet.damage * (store.getState().heat ** 1.05);
+    let state = store.getState();
+    enemy.health -= bullet.damage * (state.heat ** 1.05);
     if (enemy.health > 0) {
       this.sounds.enemyDamage.play();
       bullet.destroy();
@@ -181,8 +196,37 @@ class MainScene extends Phaser.Scene {
       if (removed) {
         this.sounds.enemyDeath.play();
         bullet.destroy();
-        store.dispatch({type: 'score', payload: Math.floor(enemy.score * (store.getState().heat ** 1.25))});
+        store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
       }
+    }
+  }
+
+  bombHit(enemy, bomb) {
+    if (enemy.hitByBomb) {
+      return;
+    }
+
+    enemy.hitByBomb = true;
+
+    console.log('hit!');
+    console.log(enemy.health);
+
+    let state = store.getState();
+
+    enemy.health -= bomb.damage;
+    if (enemy.health > 0) {
+      this.sounds.enemyDamage.play();
+      this.time.addEvent({
+        delay: 1000,
+        callback: (() => enemy.hitByBomb = false)
+      })
+    }
+
+    if (enemy.health <= 0) {
+      enemy.destroy();
+      Phaser.Utils.Array.Remove(this.enemies, enemy);
+      this.sounds.enemyDeath.play();
+      store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
     }
   }
 
@@ -259,6 +303,20 @@ class MainScene extends Phaser.Scene {
     }
   }
 
+  shootBomb() {
+    if (store.getState().heat <= 1.2) {
+      return;
+    }
+
+    this.sounds.bomb.play();
+    new BigBullet({ scene: this, x: this.player.x, y: this.player.y - 10, key: 'bullet', group: this.bomb });
+    store.dispatch({type: 'bomb'});
+  }
+
+  bombBlock(bomb, enemyBullet) {
+    enemyBullet.destroy();
+  }
+
   despawn(entity, array) {
     if (
       entity.x < -100 ||
@@ -299,7 +357,7 @@ class MainScene extends Phaser.Scene {
 
   blockHit(blocker, enemyBullet) {
     let previousHeat = store.getState().heat;
-    store.dispatch({type: 'block', payload: enemyBullet.damage / 100});
+    store.dispatch({type: 'block', payload: enemyBullet.damage / 400});
     let currentHeat = store.getState().heat;
     if ((previousHeat < 2 && currentHeat >= 2) || (previousHeat < 3 && currentHeat >= 3)) {
       this.sounds.powerup.play();
@@ -387,6 +445,10 @@ class MainScene extends Phaser.Scene {
       this.shoot();
     }
 
+    if (this.buttons.keys[32].isDown) {
+      this.shootBomb();
+    }
+
     if (this.enemyInterval > 0) {
       this.enemyInterval--;
       if (this.enemies.length === 0 && this.enemyInterval > 30) {
@@ -394,8 +456,8 @@ class MainScene extends Phaser.Scene {
       }
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200);
-      for (let i = 0; i < Math.floor(Math.random() * 30 + 5); i++) {
-        let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: 50 + Math.random() * 30, health: 20, key: 'zaku', group: this.enemy }));
+      for (let i = 0; i < Math.floor(Math.random() * 30 + 5 + ((store.getState().difficulty) / 4) ** 1.05); i++) {
+        let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: -50 - Math.random() * 80, health: 20, key: 'zaku', group: this.enemy }));
         let particles = this.add.particles('enemyBullet');
         let emitter = particles.createEmitter({
           speed: 20,

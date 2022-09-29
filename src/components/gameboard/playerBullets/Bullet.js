@@ -27,7 +27,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     this.body.onWorldBounds = true;
     this.body.world.on('worldbounds', ((body) => {
       if (body.gameObject === this) {
-        this.destroy()
+        this.destroy();
       }
     }))
   };

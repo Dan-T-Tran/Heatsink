@@ -469,9 +469,9 @@ class MainScene extends Phaser.Scene {
     for (let i = 0; i < this.enemies.length; i++) {
       this.despawn(this.enemies[i], this.enemies);
       this.enemies[i].move();
-      for (let j = 0; j < this.enemies[i].bullets.length; j++) {
-        this.despawn(this.enemies[i].bullets[j], this.enemies[i].bullets);
-      }
+      // for (let j = 0; j < this.enemies[i].bullets.length; j++) {
+      //   this.despawn(this.enemies[i].bullets[j], this.enemies[i].bullets);
+      // }
       let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
       if (bullet) {
         let particles = this.add.particles('enemyBullet');
@@ -486,6 +486,7 @@ class MainScene extends Phaser.Scene {
           emitter.scaleX.start = 0.25;
           emitter.explode(150);
         });
+
       }
     }
 

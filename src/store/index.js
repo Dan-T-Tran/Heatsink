@@ -40,7 +40,7 @@ const reducerFn = (state = {
   }
 
   if (action.type === 'cooldown') {
-    let cooldown = state.cooldown - (0.3 - ((0.2 * ((state.heat - 1) / 2)) ** 1.1));
+    let cooldown = state.cooldown - (0.5 - ((0.2 * ((state.heat - 1) / 2)) ** 1.2));
     if (cooldown < 0) {
       cooldown = 0;
     }

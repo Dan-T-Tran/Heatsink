@@ -17,6 +17,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.leave = 400;
     this.bullets = [];
     this.direction = config.x < this.scene.sys.game.scale.gameSize._width / 2 ? 1 : -1
+    this.setCollideWorldBounds = true;
 
     this.reload = 80;
   }

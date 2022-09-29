@@ -62,7 +62,13 @@ const reducerFn = (state = {
   }
 
   if (action.type === 'bomb') {
-    return ({...state, heat: 1});
+    let heat = state.heat;
+    let health = state.health;
+    health = Math.floor(health + (40 * (heat - 1)));
+    if (health > 100) {
+      health = 100;
+    }
+    return ({...state, heat: 1, health: health});
   }
 
   if (action.type === 'difficulty') {

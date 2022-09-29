@@ -80,6 +80,7 @@ class MainScene extends Phaser.Scene {
   }
 
   create() {
+
     // Set up the usable keys
     this.buttons = this.input.keyboard;
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //16
@@ -238,12 +239,18 @@ class MainScene extends Phaser.Scene {
     }
 
     store.dispatch({type: 'hurt', payload: enemyBullet.damage * (state.heat ** 1.5) * ((state.difficulty ** 1.2) / state.difficulty)});
-    if (store.getState().health <= 0) {
+    if (store.getState().health <= 0) {    this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //16
+      this.input.keyboard.removeCapture([32, 37, 38, 39, 40, 67, 88, 90]);
+      // this.input.keyboard.enabled = false;
+      // this.input.keyboard.enableGlobalCapture();
       player.destroy();
       // set time for 1 second to trigger gameover screen
       this.time.addEvent({
         delay: 1000,
-        callback: (() => store.dispatch({type:'screen', payload: 'scoreScreen'}))
+        callback: (() => {
+          this.sounds.bgm.stop();
+          store.dispatch({type:'screen', payload: 'scoreScreen'})
+        })
       });
     }
   }

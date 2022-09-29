@@ -1,40 +1,47 @@
 import Board from './Board.js';
+import TitleScreen from './TitleScreen.js';
+import Leaderboard from './Leaderboard.js';
 import Sideview from './Sideview.js';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import audio from '../../assets/titleScreen.mp3';
 
 const Game = () => {
   const gameState = useSelector((state) => state.gameState)
-  // RENDER GAMEOVER/ SCORESUBMIT SCREEN ON THIS COMPONENT
-  // GET STATE OF WHETHER TO SHOW IT FROM REDUX
-  // RENDER A TITLE SCREEN IF THERE'S TIME
-
-  // const [leaderBoard, setLeaderBoard] = useState();
+  const [titleBgm] = useState(new Audio(audio));
 
   useEffect(() => {
-
-  }, []);
+    return function cleanUp() {
+      titleBgm.currentTime = 0;
+      titleBgm.pause();
+    }
+  }, [])
 
   const renderScreen = () => {
     switch(gameState) {
       case 'title':
-        // return (<TitleScreen />);
+        return (<TitleScreen titleBgm={titleBgm}/>);
         break;
       case 'credits':
         // return (<Credits />);
         break;
-      case 'leaderboard':
-        // return (<Leaderboard />);
-        break;
-      default:
+      case 'scoreScreen':
+      case 'game':
         return (
           <>
             <div id='board'>
-              <Board />
+              <Board titleBgm={titleBgm}/>
             </div>
             <Sideview />
           </>
         );
+        break;
+      case 'leaderboard':
+        return (<Leaderboard titleBgm={titleBgm}/>);
+        break;
+      default:
+        // titleBgm.currentTime = 0;
+        // titleBgm.pause();
         break;
     }
   }
@@ -50,6 +57,3 @@ const Game = () => {
 };
 
 export default Game;
-
-//contains the actual game and the side view
-//this component sohuld render a background slighty around the game as well

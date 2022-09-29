@@ -13,9 +13,82 @@ code {
     monospace;
 }
 
-/* #App {
+.App {
   display: flex;
-} */
+  flex-direction: column;
+  width: 1500px;
+  margin: 0 auto;
+}
+
+.topbar {
+  width: 1500px;
+  height: 100px;
+  background-color: white;
+  margin-bottom: 20px;
+}
+
+.main-view {
+  width: 1500px;
+  height: 1000px;
+  background-color: white;
+}
+
+.game-panel {
+  box-sizing: border-box;
+  width: 550px;
+  height: 350px;
+  background-color: gray;
+  margin: 20px;
+  padding: 10px 0;
+  border: 1px solid black;
+}
+
+.game-panel:hover {
+  cursor: pointer;
+  box-shadow: 5px 10px black;
+}
+
+.game-title {
+  margin: 0 0 5px 0;
+}
+
+.game-thumbnail {
+
+}
+
+.game-description {
+  background-color: white;
+  width: 80%;
+  height: 60px;
+  margin: 0 auto;
+}
+
+.title-screen {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 90%;
+  margin: 0 auto;
+  background-color: gray;
+  justify-content: space-around;
+}
+
+.title-details {
+  background-color: white;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.title-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.title-button {
+  height: 60px;
+  width: 100px;
+}
 
 #game {
   /* box-sizing: border-box; */
@@ -31,7 +104,8 @@ code {
   padding-left: 30px;
   padding-top: 30px;
   /* background-color: gray; */
-  background: url('../public/assets/spaceboard.jpg');
+  background: url('../public/assets/background.jpg') no-repeat;
+  background-size: cover;
   z-index: 3;
 }
 
@@ -50,7 +124,7 @@ code {
 #board {
   height: 960px;
   width: 720px;
-  background: url('../public/assets/forest.jpg') repeat 0 0;
+  background: url('../public/assets/mistyForest.png') repeat 0 0;
   animation: animate 5s infinite;
   animation-timing-function: linear;
 }
@@ -75,11 +149,38 @@ code {
   position: fixed;
   width: 100vw;
   height: 100vh;
+  top: 0;
   left: 0;
-  right: 0;
   background-color: black;
   opacity: 0.2;
   z-index: 2;
+}
+
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 90%;
+  margin: 0 auto;
+  background-color: gray;
+}
+
+.leaderboard-details {
+  width: 80%;
+  height: 70%;
+  background-color: white;
+  margin: 20px auto;
+}
+
+.leaderboard-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.leaderboard-button {
+  height: 60px;
+  width: 100px;
 }
 
 .score-overlay {
@@ -106,6 +207,11 @@ code {
   z-index: 4;
 }
 
+button {
+  border: 1px solid black;
+}
+
 button:hover {
   cursor: pointer;
+  background-color: rgb(191, 252, 247);
 }

@@ -3,20 +3,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import RenderGame from './RenderGame.js';
 import ScoreScreen from './ScoreScreen.js';
 
-const Board = ({ handleScore }) => {
+const Board = (props) => {
   const gameState = useSelector((state) => state.gameState);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log('proc')
+    props.titleBgm.currentTime = 0;
+    props.titleBgm.pause();
     dispatch({type: 'initialize'});
 
     const game = RenderGame();
-    return function cleanup() { //remove canvas when React component unmounts
+    return function cleanup() {
       game.destroy();
-      // console.log(document.getElementsByTagName('canvas'));
-      // const canvas = document.getElementsByTagName('canvas')[0];
-      // console.log(canvas);
-      // canvas.remove();
     }
   }, [])
 

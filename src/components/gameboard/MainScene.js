@@ -452,7 +452,7 @@ class MainScene extends Phaser.Scene {
         this.enemyInterval = 10
       }
     } else {
-      this.enemyInterval = Math.floor(Math.random() * 200 + 200);
+      this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (store.getState().difficulty / 2));
       for (let i = 0; i < Math.floor(Math.random() * 30 + 5 + ((store.getState().difficulty) / 4) ** 1.05); i++) {
         let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: -50 - Math.random() * 80, health: 20, key: 'zaku', group: this.enemy }));
         let particles = this.add.particles('enemyBullet');

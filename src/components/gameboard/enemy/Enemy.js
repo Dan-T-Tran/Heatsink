@@ -5,6 +5,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y, config.key);
     this.scene = config.scene;
+    this.bulletGroup = config.bulletGroup;
     this.setTexture(config.key);
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);
@@ -18,19 +19,49 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.bullets = [];
     this.direction = config.x < this.scene.sys.game.scale.gameSize._width / 2 ? 1 : -1
     this.setCollideWorldBounds = true;
+    this.shoot = this.shoot.bind(this);
+    this.move = this.move.bind(this);
 
-    this.reload = 80;
+    // this.reload = 80;
+    let timer = config.scene.time.addEvent({
+      delay: 1000,
+      callback: this.shoot,
+      loop: true,
+    })
+
+    let timer2 = config.scene.time.addEvent({
+      delay: 10,
+      callback: this.move,
+      loop: true,
+    })
+
+    let particles = config.scene.add.particles('enemyBullet');
+    let emitter = particles.createEmitter({
+      speed: 20,
+      scale: { start: 0.3, end: 0 },
+      blendMode: 'ADD',
+    })
+    emitter.startFollow(this);
+    this.on('destroy', () => {
+      emitter.explode(150);
+      timer.remove();
+      timer2.remove();
+    });
   }
 
-  shoot(config) {
-    if (this.reload > 0) {
-      this.reload--;
+  shoot() {
+    if (
+      this.x < -100 ||
+      this.x > this.scene.sys.game.scale.gameSize._width + 100 ||
+      this.y < -300 ||
+      this.y > this.scene.sys.game.scale.gameSize._height + 100
+      )
+    {
+      this.destroy();
       return;
     }
-    this.reload = 80;
-    let bullet = Phaser.Utils.Array.Add(this.bullets, new EnemyBullet({ ...config, x: this.x, y: this.y }));
+    let bullet = new EnemyBullet({ scene: this.scene, x: this.x, y: this.y, group: this.bulletGroup });
     bullet.setVelocityY(400);
-    return bullet;
   }
 
   move() {

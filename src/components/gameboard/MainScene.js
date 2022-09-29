@@ -50,7 +50,7 @@ class MainScene extends Phaser.Scene {
     this.blocking = false;
 
     this.enemyHit = this.enemyHit.bind(this);
-    this.despawn = this.despawn.bind(this);
+    // this.despawn = this.despawn.bind(this);
     this.playerHit = this.playerHit.bind(this);
     this.cooldownCircle = this.cooldownCircle.bind(this);
     this.blockHit = this.blockHit.bind(this);
@@ -191,13 +191,9 @@ class MainScene extends Phaser.Scene {
 
     if (enemy.health <= 0) {
       enemy.destroy();
-      let removed = Phaser.Utils.Array.Remove(this.enemies, enemy);
-
-      if (removed) {
-        this.sounds.enemyDeath.play();
-        bullet.destroy();
-        store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
-      }
+      bullet.destroy();
+      store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
+      this.sounds.enemyDeath.play();
     }
   }
 
@@ -314,22 +310,22 @@ class MainScene extends Phaser.Scene {
     enemyBullet.destroy();
   }
 
-  despawn(entity, array) {
-    if (
-      entity.x < -100 ||
-      entity.x > this.sys.game.scale.gameSize._width + 100 ||
-      entity.y < -300 ||
-      entity.y > this.sys.game.scale.gameSize._height + 100
-      )
-    {
-      entity.destroy();
-      if (array) {
-        Phaser.Utils.Array.Remove(array, entity);
-      }
-    }
+  // despawn(entity, array) {
+  //   if (
+  //     entity.x < -100 ||
+  //     entity.x > this.sys.game.scale.gameSize._width + 100 ||
+  //     entity.y < -300 ||
+  //     entity.y > this.sys.game.scale.gameSize._height + 100
+  //     )
+  //   {
+  //     entity.destroy();
+  //     if (array) {
+  //       Phaser.Utils.Array.Remove(array, entity);
+  //     }
+  //   }
     // despawn enemies and bullets once they're out of bounds far enough
     // if low on time, just despawn once they hit the canvas edges or something
-  }
+  // }
 
   block() {
     this.sounds.block.play();
@@ -448,47 +444,36 @@ class MainScene extends Phaser.Scene {
 
     if (this.enemyInterval > 0) {
       this.enemyInterval--;
-      if (this.enemies.length === 0 && this.enemyInterval > 30) {
-        this.enemyInterval = 10
-      }
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (store.getState().difficulty / 2));
       for (let i = 0; i < Math.floor(Math.random() * 30 + 5 + ((store.getState().difficulty) / 4) ** 1.05); i++) {
-        let enemy = Phaser.Utils.Array.Add(this.enemies, new Enemy({scene: this, x: Math.random() * 680 + 20, y: -50 - Math.random() * 80, health: 20, key: 'zaku', group: this.enemy }));
-        let particles = this.add.particles('enemyBullet');
-        let emitter = particles.createEmitter({
-          speed: 20,
-          scale: { start: 0.3, end: 0 },
-          blendMode: 'ADD',
-        })
-        emitter.startFollow(enemy);
-        enemy.on('destroy', () => emitter.explode(150));
+        new Enemy({scene: this, x: Math.random() * 680 + 20, y: -50 - Math.random() * 80, health: 20, key: 'zaku', group: this.enemy, bulletGroup: this.enemyBullet });
       }
     }
 
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.despawn(this.enemies[i], this.enemies);
-      this.enemies[i].move();
+    // for (let i = 0; i < this.enemies.length; i++) {
+      // this.despawn(this.enemies[i], this.enemies);
+      // this.enemies[i].move();
       // for (let j = 0; j < this.enemies[i].bullets.length; j++) {
       //   this.despawn(this.enemies[i].bullets[j], this.enemies[i].bullets);
       // }
-      let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
-      if (bullet) {
-        let particles = this.add.particles('enemyBullet');
-        let emitter = particles.createEmitter({
-          speed: 5,
-          lifespan: 500,
-          scale: { start: 0, end: 0 },
-          blendMode: 'ADD',
-        })
-        emitter.startFollow(bullet);
-        bullet.on('destroy', () => {
-          emitter.scaleX.start = 0.25;
-          emitter.explode(150);
-        });
+      // let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
+      // if (bullet) {
+        // let particles = this.add.particles('enemyBullet');
+        // let emitter = particles.createEmitter({
+          // speed: 5,
+          // lifespan: 500,
+          // scale: { start: 0, end: 0 },
+          // blendMode: 'ADD',
+        // })
+        // emitter.startFollow(bullet);
+        // bullet.on('destroy', () => {
+          // emitter.scaleX.start = 0.25;
+          // emitter.explode(150);
+        // });
 
-      }
-    }
+      // }
+    // }
 
   }
 

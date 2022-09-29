@@ -1,13 +1,14 @@
 const db = require('../db');
 
 const get = async () => {
-  const documents = await db.find();
-  console.log(documents);
+  const documents = await db.find().sort({score: 'desc'});
+  return documents;
 };
 
 const post = async (data) => {
-  const document = await db.save(data);
-  console.log(document);
+  const newDocument = new db(data);
+  const document = await newDocument.save(data);
+  return document;
 }
 
 exports.get = get;

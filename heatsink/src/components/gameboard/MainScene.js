@@ -106,8 +106,8 @@ class MainScene extends Phaser.Scene {
     this.sounds.enemyDeath = this.sound.add('enemyDeath');
 
     // this.sounds.bgm.volume = 0.2;
-    // this.sounds.bgm.play.loop = true;
-    // this.sounds.bgm.play();
+    this.sounds.bgm.play.loop = true;
+    this.sounds.bgm.play();
 
     // this.sounds.enemyDeath.loop = true;
     // this.sounds.enemyDeath.play();

@@ -1,16 +1,22 @@
 const { get, post } = require('../models');
 
-const getScores = (req, res) => {
-  const documents = get();
-  console.log('CONTROLLERS', documents);
-  res.sendStatus(501);
+const getScores = async (req, res) => {
+  const documents = await get();
+  if (documents) {
+    res.status(200).send(documents);
+  } else {
+    res.sendStatus(500);
+  }
 };
 
-const postScore = (req, res) => {
+const postScore = async (req, res) => {
   const { name, score } = req.body;
-  const document = post({ name, score });
-  console.log('CONTROLLER POST', document);
-  res.sendStatus(501);
+  const document = await post({ name, score });
+  if (document) {
+    res.status(201).send(document);
+  } else {
+    res.sendStatus(500);
+  }
 };
 
 exports.getScores = getScores;

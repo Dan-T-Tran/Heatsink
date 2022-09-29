@@ -6,7 +6,8 @@ const db = mongoose.connection;
 const heatSchema = new mongoose.Schema({
   name: String,
   score: Number,
-  // date: String,
 });
 
-module.exports = heatSchema;
+const HeatScores = mongoose.model('HeatScores', heatSchema);
+
+module.exports = HeatScores;

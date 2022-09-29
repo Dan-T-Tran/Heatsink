@@ -10,7 +10,6 @@ const ScoreScreen = () => {
   const [pointer, setPointer] = useState([0, 0]);
 
   const handleChange = (e) => {
-    console.log(e.target.value);
     setName(e.target.value);
   }
 

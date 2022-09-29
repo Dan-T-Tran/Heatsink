@@ -13,8 +13,10 @@ const Board = ({ handleScore }) => {
     const game = RenderGame();
     return function cleanup() { //remove canvas when React component unmounts
       game.destroy();
-      const canvas = document.getElementsByTagName('canvas')[0];
-      canvas.remove();
+      // console.log(document.getElementsByTagName('canvas'));
+      // const canvas = document.getElementsByTagName('canvas')[0];
+      // console.log(canvas);
+      // canvas.remove();
     }
   }, [])
 

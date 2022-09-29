@@ -76,8 +76,11 @@ const reducerFn = (state = {
     return ({...state, difficulty: state.difficulty + 1 > 99 ? 99 : state.difficulty + 1});
   }
 
-  return state;
+  if (action.type === 'screen') {
+    return ({...state, gameState: action.payload})
+  }
 
+  return state;
 }
 
 const store = createStore(reducerFn);

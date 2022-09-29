@@ -40,9 +40,6 @@ class MainScene extends Phaser.Scene {
     this.buttons = null;
     this.bullet = null;
     this.bomb = null;
-    this.bullets = [];
-    this.enemies = [];
-    this.enemybullets = [];
     this.reload = 0;
     this.enemyInterval = 0;
     this.sounds = {};
@@ -50,7 +47,6 @@ class MainScene extends Phaser.Scene {
     this.blocking = false;
 
     this.enemyHit = this.enemyHit.bind(this);
-    // this.despawn = this.despawn.bind(this);
     this.playerHit = this.playerHit.bind(this);
     this.cooldownCircle = this.cooldownCircle.bind(this);
     this.blockHit = this.blockHit.bind(this);
@@ -221,7 +217,6 @@ class MainScene extends Phaser.Scene {
 
     if (enemy.health <= 0) {
       enemy.destroy();
-      Phaser.Utils.Array.Remove(this.enemies, enemy);
       this.sounds.enemyDeath.play();
       store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
     }
@@ -246,10 +241,10 @@ class MainScene extends Phaser.Scene {
     if (store.getState().health <= 0) {
       player.destroy();
       // set time for 1 second to trigger gameover screen
-      // this.time.addEvent({
-        // delay: 1000,
-        // callback: (() => store.dispatch(type:'gameover'))
-      // });
+      this.time.addEvent({
+        delay: 1000,
+        callback: (() => store.dispatch({type:'screen', payload: 'scoreScreen'}))
+      });
     }
   }
 
@@ -446,7 +441,7 @@ class MainScene extends Phaser.Scene {
     }
 
     // Trigger enemies sooner if there's too few enemies on screen
-    if (this.enemy.children.entries.length <= 5 + (store.getState().difficulty / 3) && this.enemyInterval > 80) {
+    if (this.enemy.children.entries.length <= (5 + (store.getState().difficulty / 3)) * (store.getState().heat) && this.enemyInterval > 80) {
       this.enemyInterval = 30;
     }
   }

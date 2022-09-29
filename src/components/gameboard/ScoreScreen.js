@@ -1,22 +1,31 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 // import store from '../../store';
 import axios from 'axios';
 
 const ScoreScreen = () => {
   const [name, setName] = useState('');
   const score = useSelector((state) => state.score);
+  const dispatch = useDispatch();
   const [pointer, setPointer] = useState([0, 0]);
 
-  const handleSubmit = (event) => {
+  const handleChange = (e) => {
+    console.log(e.target.value);
+    setName(e.target.value);
+  }
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = {
       name: name,
       score: score
     }
 
-    axios.post('/heatsink')
-    .then((response) => console.log(response)) //either show leaderboard in the then, or go to main screen
+    await axios.post('/heatsink', data)
+    .then((response) => {
+      console.log(response);
+      dispatch({type: 'screen', payload: 'title'});
+    }) //either show leaderboard in the then, or go to main screen
     .catch((err) => console.log(err));
   };
 
@@ -33,8 +42,9 @@ const ScoreScreen = () => {
     <div className='score-overlay'></div>
     <div className='score-screen'>
       <h1>GAME OVER</h1>
-      <input type='text' className='score-name-input' placeholder='Enter name'></input>
-      <button type='submit' className='score-submit-button' onSubmit={handleSubmit}>Submit</button>
+      <h2>Your score: {score}</h2>
+      <input type='text' className='score-name-input' onChange={handleChange} placeholder='Enter name'></input>
+      <button type='submit' className='score-submit-button' onClick={handleSubmit}>Submit</button>
     </div>
     </>
   )

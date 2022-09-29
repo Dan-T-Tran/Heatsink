@@ -1,7 +1,7 @@
-import Phaser from 'phaser';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import RenderGame from './RenderGame.js';
+import ScoreScreen from './ScoreScreen.js';
 
 const Board = ({ handleScore }) => {
   const gameState = useSelector((state) => state.gameState);
@@ -20,8 +20,8 @@ const Board = ({ handleScore }) => {
 
   return (
     <>
-      <div id='game-board'>
-      </div>
+      {gameState === 'scoreScreen' && <ScoreScreen />}
+      <div id='game-board' />
     </>
   );
 };

@@ -1,6 +1,5 @@
 import Board from './Board.js';
 import Sideview from './Sideview.js';
-import ScoreScreen from './ScoreScreen.js';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -24,7 +23,10 @@ const Game = () => {
       case 'credits':
         // return (<Credits />);
         break;
-      case 'game':
+      case 'leaderboard':
+        // return (<Leaderboard />);
+        break;
+      default:
         return (
           <>
             <div id='board'>
@@ -34,14 +36,6 @@ const Game = () => {
           </>
         );
         break;
-      case 'leaderboard':
-        // return (<Leaderboard />);
-        break;
-      case 'scoreScreen':
-        // return (<ScoreScreen />);
-        break;
-      default:
-        return;
     }
   }
 

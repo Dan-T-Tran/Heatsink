@@ -81,3 +81,31 @@ code {
   opacity: 0.2;
   z-index: 2;
 }
+
+.score-overlay {
+  position: absolute;
+  width: 1080px;
+  height: 1020px;
+  bottom: 0;
+  left: 0;
+  /* left: 0; */
+  /* right: 0; */
+  background-color: black;
+  opacity: 0.2;
+  z-index: 3;
+}
+
+.score-screen {
+  position: absolute;
+  width: 600px;
+  height: 80%;
+  left: 84px;
+  top: 50px;
+  /* margin: 0 auto; */
+  background-color: white;
+  z-index: 4;
+}
+
+button:hover {
+  cursor: pointer;
+}

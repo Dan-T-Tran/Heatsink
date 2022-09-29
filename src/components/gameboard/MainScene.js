@@ -310,23 +310,6 @@ class MainScene extends Phaser.Scene {
     enemyBullet.destroy();
   }
 
-  // despawn(entity, array) {
-  //   if (
-  //     entity.x < -100 ||
-  //     entity.x > this.sys.game.scale.gameSize._width + 100 ||
-  //     entity.y < -300 ||
-  //     entity.y > this.sys.game.scale.gameSize._height + 100
-  //     )
-  //   {
-  //     entity.destroy();
-  //     if (array) {
-  //       Phaser.Utils.Array.Remove(array, entity);
-  //     }
-  //   }
-    // despawn enemies and bullets once they're out of bounds far enough
-    // if low on time, just despawn once they hit the canvas edges or something
-  // }
-
   block() {
     this.sounds.block.play();
     this.blocking = true;
@@ -362,19 +345,22 @@ class MainScene extends Phaser.Scene {
     let cooldown = store.getState().cooldown;
     let startAngle = Phaser.Math.DegToRad(-90);
     let finalAngle = Phaser.Math.DegToRad(359.9 * (1 - cooldown / 100) - 90);
-    this.circle.lineStyle(cooldown <= 0 ? 4 : 2, cooldown <= 0 ? 0xffffff : 0xc0c0c0, 1);
+    this.circle.lineStyle(cooldown <= 0 ? 4 : 2, this.invulnerable ? 0xab1919 : 0xffffff, cooldown <= 0 ? 1 : 0.5);
     this.circle.beginPath();
     this.circle.arc(this.player.x, this.player.y, 50, startAngle, finalAngle, false);
     this.circle.strokePath();
   }
 
   update() {
+    // Update cooldown indicator around player
     this.circle.clear();
 
+    // Prevent game updates once player dies
     if (store.getState().health <= 0) {
       return;
     }
 
+    // Update cooldown
     if (store.getState().cooldown > 0) {
       store.dispatch({type: 'cooldown'})
       if (store.getState().cooldown <= 0) {
@@ -382,13 +368,16 @@ class MainScene extends Phaser.Scene {
       }
     }
 
+    // Update blocker's position with the player
     this.blockMove();
     this.cooldownCircle();
 
+    // Trigger block on X as long as cooldown is done and is not currently running
     if (this.buttons.keys[88].isDown && store.getState().cooldown <= 0 && !this.blocking) {
       this.block();
     }
 
+    // Timer for invulnerability
     if (this.invulnerable > 0) {
       this.invulnerable--;
       if (this.invulnerable <= 0) {
@@ -434,14 +423,15 @@ class MainScene extends Phaser.Scene {
       this.reload--;
     }
 
+    // Perform appropriate shooting actions on Z and space
     if (this.buttons.keys[90].isDown) {
       this.shoot();
     }
-
     if (this.buttons.keys[32].isDown) {
       this.shootBomb();
     }
 
+    // Trigger enemies at some random interval
     if (this.enemyInterval > 0) {
       this.enemyInterval--;
     } else {
@@ -451,37 +441,11 @@ class MainScene extends Phaser.Scene {
       }
     }
 
-    // for (let i = 0; i < this.enemies.length; i++) {
-      // this.despawn(this.enemies[i], this.enemies);
-      // this.enemies[i].move();
-      // for (let j = 0; j < this.enemies[i].bullets.length; j++) {
-      //   this.despawn(this.enemies[i].bullets[j], this.enemies[i].bullets);
-      // }
-      // let bullet = this.enemies[i].shoot({scene: this, key: 'enemyBullet', group: this.enemyBullet });
-      // if (bullet) {
-        // let particles = this.add.particles('enemyBullet');
-        // let emitter = particles.createEmitter({
-          // speed: 5,
-          // lifespan: 500,
-          // scale: { start: 0, end: 0 },
-          // blendMode: 'ADD',
-        // })
-        // emitter.startFollow(bullet);
-        // bullet.on('destroy', () => {
-          // emitter.scaleX.start = 0.25;
-          // emitter.explode(150);
-        // });
-
-      // }
-    // }
-
+    // Trigger enemies sooner if there's too few enemies on screen
+    if (this.enemy.children.entries.length <= 5 && this.enemyInterval > 80) {
+      this.enemyInterval = 30;
+    }
   }
-
-
 }
 
-
 export default MainScene;
-
-// this.bg_sound = this.sound.add('KEY')
-// this.bg_sound.play()

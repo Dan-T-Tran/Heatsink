@@ -4,7 +4,7 @@ class NormalBullet extends Bullet {
   constructor(config) {
     super(config);
     this.setTexture('bullet');
-    this.damage = 5;
+    this.damage = config.keyDown ? 7 : 4;
   }
 }
 

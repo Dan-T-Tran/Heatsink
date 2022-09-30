@@ -4,6 +4,7 @@ import BigBullet from './playerBullets/BigBullet.js';
 import Mook from './enemy/Mook.js';
 import Normal from './weapons/Normal.js';
 import Beam from './weapons/Beam.js';
+import Melee from './weapons/Melee.js';
 
 /*
 EXTRAS:
@@ -25,6 +26,7 @@ class MainScene extends Phaser.Scene {
     this.invulnerable = 0;
     this.buttons = null;
     this.bullet = null;
+    this.pierceBullet = null;
     this.bomb = null;
     this.reload = 0;
     this.enemyInterval = 0;
@@ -36,6 +38,7 @@ class MainScene extends Phaser.Scene {
     this.weaponSwitch = 0;
 
     this.enemyHit = this.enemyHit.bind(this);
+    this.enemyHitPierce = this.enemyHitPierce.bind(this);
     this.playerHit = this.playerHit.bind(this);
     this.cooldownCircle = this.cooldownCircle.bind(this);
     this.blockHit = this.blockHit.bind(this);
@@ -53,6 +56,7 @@ class MainScene extends Phaser.Scene {
     this.load.image('zaku', './assets/zaku.png');
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('beam', './assets/beam.png');
+    this.load.image('melee', './assets/wave.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
     this.load.image('shield', './assets/shield.png');
 
@@ -106,12 +110,7 @@ class MainScene extends Phaser.Scene {
 
     this.weapons.push(Normal);
     this.weapons.push(Beam);
-
-    // this.sounds.enemyDeath.loop = true;
-    // this.sounds.enemyDeath.play();
-
-    // setTimeout(() => this.sounds.enemyDeath.loop = false, 10000);
-
+    this.weapons.push(Melee);
 
     // Set up the base player properties
     this.player = this.physics.add.sprite(200, 400, 'gundam');
@@ -143,12 +142,14 @@ class MainScene extends Phaser.Scene {
 
     // Add groups for components
     this.bullet = this.physics.add.group();
+    this.pierceBullet = this.physics.add.group();
     this.bomb = this.physics.add.group();
     this.enemy = this.physics.add.group();
     this.enemyBullet = this.physics.add.group();
 
     // Add collision logic
     this.physics.add.overlap(this.enemy, this.bullet, this.enemyHit);
+    this.physics.add.overlap(this.enemy, this.pierceBullet, this.enemyHitPierce);
     this.physics.add.overlap(this.player, this.enemyBullet, this.playerHit);
     this.physics.add.overlap(this.blocker, this.enemyBullet, this.blockHit);
     this.physics.add.overlap(this.bomb, this.enemyBullet, this.bombBlock);
@@ -188,10 +189,33 @@ class MainScene extends Phaser.Scene {
     }
 
     if (enemy.health <= 0) {
-      enemy.destroy();
       bullet.destroy();
+      enemy.destroy();
       store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
       this.sounds.enemyDeath.play();
+    }
+  }
+
+  enemyHitPierce(enemy, bullet) {
+    if (enemy.hitbyPierce) {
+      return;
+    }
+
+    let state = store.getState();
+    if (enemy.health > 0 && !enemy.hitByPierce) {
+      enemy.health -= bullet.damage * (state.heat ** 1.05);
+      enemy.hitByPierce = true;
+      this.sounds.enemyDamage.play();
+      this.time.addEvent({
+        delay: 600,
+        callback: (() => enemy.hitByPierce = false)
+      })
+    }
+
+    if (enemy.health <= 0) {
+      enemy.destroy();
+      this.sounds.enemyDeath.play();
+      store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
     }
   }
 
@@ -260,11 +284,11 @@ class MainScene extends Phaser.Scene {
     let heat = store.getState().heat;
     this.reload = this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, this.buttons.keys[16].isDown);
 
-    if (this.weapons[this.weaponsPointer]() === 'Normal') {
+    if (this.weapons[this.weaponsPointer]() === 'Beam') {
+      this.sounds.shootBeam.play();
+    } else {
       this.reload = this.reload * (heat / (heat ** 1.35))
       this.sounds.shoot.play();
-    } else {
-      this.sounds.shootBeam.play();
     }
   }
 

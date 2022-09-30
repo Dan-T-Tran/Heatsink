@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 // import store from '../../store';
 import axios from 'axios';
 import audio from '../../assets/gameOver.mp3'
+import moment from 'moment';
 
 const ScoreScreen = () => {
   const [name, setName] = useState('');
   const score = useSelector((state) => state.score);
+  const difficulty = useSelector((state) => state.difficulty);
   const dispatch = useDispatch();
   const [pointer, setPointer] = useState([0, 0]);
   const [gameOver] = useState(new Audio(audio));
@@ -37,17 +39,17 @@ const ScoreScreen = () => {
 
     const data = {
       name: name,
-      score: score
+      score: score,
+      date: moment().format('MM DD YYYY'),
+      difficulty: difficulty
     }
 
     await axios.post('/heatsink', data)
-    .then((response) => {
-      console.log(response);
-      dispatch({type: 'screen', payload: 'leaderboard'});
-    }) //either show leaderboard in the then, or go to main screen
+    .then((response) => dispatch({ type: 'screen', payload: 'leaderboard' }))
     .catch((err) => console.log(err));
   };
 
+  // Maybe try to set up a keyboard score submit eventually?
   const renderKeyboard = () => {
     const keyboard = [
       ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'enter'],

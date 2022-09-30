@@ -36,6 +36,7 @@ class MainScene extends Phaser.Scene {
     this.weapons = [];
     this.weaponsPointer = 0;
     this.weaponSwitch = 0;
+    this.difficultyTimer = null;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.enemyHitPierce = this.enemyHitPierce.bind(this);
@@ -173,7 +174,7 @@ class MainScene extends Phaser.Scene {
     });
 
     // Increment difficulty every 15 seconds
-    this.time.addEvent({
+    this.difficultyTimer = this.time.addEvent({
       delay: 15000,
       callback: (() => store.dispatch({type: 'difficulty'})),
       repeat: 98
@@ -265,6 +266,7 @@ class MainScene extends Phaser.Scene {
       // this.input.keyboard.enabled = false;
       // this.input.keyboard.enableGlobalCapture();
       player.destroy();
+      this.difficultyTimer.remove();
       // set time for 1 second to trigger gameover screen
       this.time.addEvent({
         delay: 1000,
@@ -305,6 +307,7 @@ class MainScene extends Phaser.Scene {
     this.sounds.switchWeapon.play();
     this.weaponSwitch = 100;
     this.reload = 15;
+    store.dispatch( {type:'weaponSwitch', payload:this.weapons[this.weaponsPointer]() })
   }
 
   shootBomb() {

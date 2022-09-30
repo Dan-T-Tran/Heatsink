@@ -19,18 +19,6 @@ class BigBullet extends Phaser.Physics.Arcade.Sprite {
       callback: (() => this.destroy())
     });
   };
-
-  move(velocityX, velocityY) {
-    // let deg = Math.tan(velocityY / velocityX) || 0;
-
-    // this.setVelocityX(velocityX);
-    // this.setVelocityY(velocityY);
-    // this.angle = deg;
-  }
-
-  update() {
-
-  }
 };
 
 export default BigBullet;

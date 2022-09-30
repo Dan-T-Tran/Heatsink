@@ -31,7 +31,7 @@ const Leaderboard = (props) => {
         // topPlayers = null;
         break;
       }
-      topPlayers.push(<h3 key = {i + leaderboard[i].score}>{i + 1} | {leaderboard[i].name} - {leaderboard[i].score}</h3>)
+      topPlayers.push(<h3 key = {i + leaderboard[i].score}>{i + 1} | {leaderboard[i].name} - {leaderboard[i].score} | {leaderboard[i].date.slice(0, 2) + '/' + leaderboard[i].date.slice(3, 5)}</h3>)
     }
     return topPlayers;
   }
@@ -53,6 +53,7 @@ const Leaderboard = (props) => {
       <div className='leaderboard-details'>
         {loading && <h1>Loading top players. . .</h1>}
         {!loading && <h1><u>Top {(page + 1) * 10} players</u></h1>}
+        {!loading && <h2>Position | Name | Score | Date</h2>}
         {renderLeaderboard()}
       </div>
       <div className='leaderboard-buttons'>

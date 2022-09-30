@@ -8,7 +8,6 @@ const Board = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log('proc')
     props.titleBgm.currentTime = 0;
     props.titleBgm.pause();
     dispatch({type: 'initialize'});

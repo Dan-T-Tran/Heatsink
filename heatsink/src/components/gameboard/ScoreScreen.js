@@ -19,8 +19,8 @@ const ScoreScreen = () => {
     }, false);
 
     return function cleanUp() {
-      gameOver.pause();
       gameOver.currentTime = 0;
+      gameOver.pause();
     }
   }, [])
 

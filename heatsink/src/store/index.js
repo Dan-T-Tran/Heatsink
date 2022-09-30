@@ -15,6 +15,7 @@ const reducerFn = (state = {
       heat: 1,
       cooldown: 0,
       difficulty: 1,
+      volume: 1,
       gameState: 'game',
     });
   }

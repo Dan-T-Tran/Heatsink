@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 const Leaderboard = (props) => {
   const [leaderboard, setLeaderboard] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const dispatch = useDispatch();
 
@@ -14,6 +15,7 @@ const Leaderboard = (props) => {
 
     async function fetchData() {
       const results = await axios.get('/heatsink')
+      setLoading(false);
       setLeaderboard(results.data);
     }
     fetchData();
@@ -25,7 +27,6 @@ const Leaderboard = (props) => {
     }
     let topPlayers = [];
     for (let i = page * 10; i < page * 10 + 10; i++) {
-      console.log(i);
       if (!leaderboard[i] || !leaderboard[i].name) {
         // topPlayers = null;
         break;
@@ -50,7 +51,8 @@ const Leaderboard = (props) => {
   return (
     <div className='leaderboard'>
       <div className='leaderboard-details'>
-        <h1><u>Top {(page + 1) * 10} players</u></h1>
+        {loading && <h1>Loading top players. . .</h1>}
+        {!loading && <h1><u>Top {(page + 1) * 10} players</u></h1>}
         {renderLeaderboard()}
       </div>
       <div className='leaderboard-buttons'>

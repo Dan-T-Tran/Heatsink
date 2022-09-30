@@ -2,13 +2,14 @@ import Phaser from 'phaser';
 
 class Bullet extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
-    super(config.scene, config.x, config.y, config.key);
-    // maybe make damage dynamic?
-    this.damage = 5;
-    this.setTexture(config.key);
+    super(config.scene, config.x, config.y);
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);
-    config.group.add(this);
+    config.scene.bullet.add(this);
+    this.dx = config.dx;
+    this.dy = config.dy;
+    this.setVelocity(config.dx, config.dy);
+    this.angle = Phaser.Math.RadToDeg(Phaser.Math.Angle.Between(this.x, this.y, this.x + this.dx, this.y + this.dy)) + 90;
 
     let particles = config.scene.add.particles('enemyBullet');
     let emitter = particles.createEmitter({
@@ -31,19 +32,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
       }
     }))
   };
-
-  move(velocityX, velocityY) {
-    //fix angle math
-    let deg = Math.tan(velocityY / velocityX) || 0;
-
-    this.setVelocityX(velocityX);
-    this.setVelocityY(velocityY);
-    this.angle = deg;
-  }
-
-  update() {
-
-  }
 };
 
 export default Bullet;

@@ -1,6 +1,7 @@
 import Board from './Board.js';
 import TitleScreen from './TitleScreen.js';
 import Leaderboard from './Leaderboard.js';
+import Credits from './Credits.js';
 import Sideview from './Sideview.js';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -23,7 +24,7 @@ const Game = () => {
         return (<TitleScreen titleBgm={titleBgm}/>);
         break;
       case 'credits':
-        // return (<Credits />);
+        return (<Credits />);
         break;
       case 'scoreScreen':
       case 'game':
@@ -40,8 +41,6 @@ const Game = () => {
         return (<Leaderboard titleBgm={titleBgm}/>);
         break;
       default:
-        // titleBgm.currentTime = 0;
-        // titleBgm.pause();
         break;
     }
   }

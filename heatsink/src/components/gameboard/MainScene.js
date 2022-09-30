@@ -1,31 +1,17 @@
 import Phaser from 'phaser';
 import store from '../../store';
-import Bullet from './playerBullets/Bullet.js';
 import BigBullet from './playerBullets/BigBullet.js';
-import Enemy from './enemy/Enemy.js';
+import Mook from './enemy/Mook.js';
+import Normal from './weapons/Normal.js';
+import Beam from './weapons/Beam.js';
 
 /*
-TODO:
-Add game over screen
-Implement score submission in game over screen
-Implement back-end for score submission
-
-Add leaderboard somewhere
-  With time: on a title screen
-  With no time: on the sidebar
-
-Implement back-end for leaderboard GET
-  If title screen: when title screen loads
-  If sidebar: when sidebar loads
-
 EXTRAS:
 
 Credit screen (can delegate to the README)
 Extra enemy types
 Extra bullet types
-Difficulty scaling
 Maybe a boss somewhere in there
-Graphic indicator for blocking cooldown instead of text indicator (partial circle?)
 Find more sprites?
 */
 
@@ -45,6 +31,9 @@ class MainScene extends Phaser.Scene {
     this.sounds = {};
     this.circle = null;
     this.blocking = false;
+    this.weapons = [];
+    this.weaponsPointer = 0;
+    this.weaponSwitch = 0;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.playerHit = this.playerHit.bind(this);
@@ -63,12 +52,15 @@ class MainScene extends Phaser.Scene {
     { frameWidth: 26, frameHeight: 31});
     this.load.image('zaku', './assets/zaku.png');
     this.load.image('bullet', './assets/bullet.png');
+    this.load.image('beam', './assets/beam.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
     this.load.image('shield', './assets/shield.png');
 
     this.load.audio('bgm', './assets/music/bgm.mp3');
     this.load.audio('damage', './assets/sound/se_tan00.wav');
     this.load.audio('shoot', './assets/sound/se_plst00.wav');
+    this.load.audio('shootBeam', './assets/sound/se_lazer01.wav');
+    this.load.audio('switchWeapon', './assets/sound/se_shutter.wav');
     this.load.audio('bomb', './assets/sound/se_gun00.wav');
     this.load.audio('block', './assets/sound/se_powerup.wav');
     this.load.audio('powerup', './assets/sound/se_power1.wav');
@@ -97,6 +89,8 @@ class MainScene extends Phaser.Scene {
     this.sounds.bgm = this.sound.add('bgm');
     this.sounds.damage = this.sound.add('damage');
     this.sounds.shoot = this.sound.add('shoot');
+    this.sounds.shootBeam = this.sound.add('shootBeam');
+    this.sounds.switchWeapon = this.sound.add('switchWeapon');
     this.sounds.bomb = this.sound.add('bomb');
     this.sounds.block = this.sound.add('block');
     this.sounds.powerup = this.sound.add('powerup');
@@ -109,6 +103,9 @@ class MainScene extends Phaser.Scene {
     // this.sounds.bgm.volume = 0.2;
     this.sounds.bgm.play.loop = true;
     this.sounds.bgm.play();
+
+    this.weapons.push(Normal);
+    this.weapons.push(Beam);
 
     // this.sounds.enemyDeath.loop = true;
     // this.sounds.enemyDeath.play();
@@ -261,45 +258,29 @@ class MainScene extends Phaser.Scene {
     }
 
     let heat = store.getState().heat;
-    this.reload = Math.floor(40 - (30 * ((heat - 1) / 2)));
-    let bullet;
-    this.sounds.shoot.play();
+    this.reload = this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, this.buttons.keys[16].isDown);
 
-    if (this.buttons.keys[16].isDown) {
-      bullet = new Bullet({ scene: this, x: this.player.x - 10, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-      bullet.move(0, -400);
-      bullet = new Bullet({ scene: this, x: this.player.x + 10, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-      bullet.move(0, -400);
-      if (heat >= 2) {
-        bullet = new Bullet({ scene: this, x: this.player.x - 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(0, -400);
-        bullet = new Bullet({ scene: this, x: this.player.x + 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(0, -400);
-      }
-      if (heat >= 3) {
-        bullet = new Bullet({ scene: this, x: this.player.x - 20, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(0, -400);
-        bullet = new Bullet({ scene: this, x: this.player.x + 20, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(0, -400);
-      }
+    if (this.weapons[this.weaponsPointer]() === 'Normal') {
+      this.reload = this.reload * (heat / (heat ** 1.35))
+      this.sounds.shoot.play();
     } else {
-      bullet = new Bullet({ scene: this, x: this.player.x, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-      bullet.move(-250, -400);
-      bullet = new Bullet({ scene: this, x: this.player.x, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-      bullet.move(250, -400);
-      if (heat >= 2) {
-        bullet = new Bullet({ scene: this, x: this.player.x - 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(-250, -400);
-        bullet = new Bullet({ scene: this, x: this.player.x + 15, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(250, -400);
-      }
-      if (heat >= 3) {
-        bullet = new Bullet({ scene: this, x: this.player.x - 25, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(-250, -400);
-        bullet = new Bullet({ scene: this, x: this.player.x + 25, y: this.player.y - 5, key: 'bullet', group: this.bullet });
-        bullet.move(250, -400);
-      }
+      this.sounds.shootBeam.play();
     }
+  }
+
+  switchWeapon() {
+    if (this.weaponSwitch > 0) {
+      return;
+    }
+
+    this.weaponsPointer++;
+    if (this.weaponsPointer >= this.weapons.length) {
+      this.weaponsPointer = 0;
+    }
+
+    this.sounds.switchWeapon.play();
+    this.weaponSwitch = 100;
+    this.reload = 15;
   }
 
   shootBomb() {
@@ -428,6 +409,9 @@ class MainScene extends Phaser.Scene {
     if (this.reload > 0) {
       this.reload--;
     }
+    if (this.weaponSwitch > 0) {
+      this.weaponSwitch--;
+    }
 
     // Perform appropriate shooting actions on Z and space
     if (this.buttons.keys[90].isDown) {
@@ -436,6 +420,9 @@ class MainScene extends Phaser.Scene {
     if (this.buttons.keys[32].isDown) {
       this.shootBomb();
     }
+    if (this.buttons.keys[67].isDown) {
+      this.switchWeapon();
+    }
 
     // Trigger enemies at some random interval
     if (this.enemyInterval > 0) {
@@ -443,7 +430,7 @@ class MainScene extends Phaser.Scene {
     } else {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (store.getState().difficulty / 2));
       for (let i = 0; i < Math.floor(Math.random() * 30 + 5 + ((store.getState().difficulty) / 4) ** 1.05); i++) {
-        new Enemy({scene: this, x: Math.random() * 680 + 20, y: -50 - Math.random() * 80, health: 20, key: 'zaku', group: this.enemy, bulletGroup: this.enemyBullet });
+        new Mook({scene: this, x: Math.random() * 680 + 20, y: -50 - Math.random() * 80, health: 20, key: 'zaku', group: this.enemy, bulletGroup: this.enemyBullet });
       }
     }
 

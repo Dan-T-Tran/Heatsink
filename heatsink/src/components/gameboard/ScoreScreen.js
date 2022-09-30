@@ -28,8 +28,13 @@ const ScoreScreen = () => {
     setName(e.target.value);
   }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (e.target.name === 'back') {
+      dispatch({type: 'screen', payload: 'title'});
+      return;
+    }
+
     const data = {
       name: name,
       score: score
@@ -55,10 +60,15 @@ const ScoreScreen = () => {
     <>
     <div className='score-overlay'></div>
     <div className='score-screen'>
-      <h1>GAME OVER</h1>
-      <h2>Your score: {score}</h2>
-      <input type='text' className='score-name-input' onChange={handleChange} maxLength={15} placeholder='Enter name'></input>
-      <button type='submit' className='score-submit-button' onClick={handleSubmit}>Submit</button>
+      <div className='score-submit-details'>
+        <h1>GAME OVER</h1>
+        <h2>Your score: {score}</h2>
+        <input type='text' className='score-screen-input' onChange={handleChange} maxLength={15} placeholder='Enter name'></input>
+      </div>
+      <div className='score-submit-buttons'>
+        <button type='submit' className='score-submit-button' name='forward' onClick={handleSubmit}>Submit</button>
+        <button type='submit' className='score-submit-button' name='back' onClick={handleSubmit}>Exit</button>
+      </div>
     </div>
     </>
   )

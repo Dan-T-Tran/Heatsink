@@ -41,6 +41,7 @@ code {
   margin: 20px;
   padding: 10px 0;
   border: 1px solid black;
+  transition: 0.5s
 }
 
 .game-panel:hover {
@@ -88,6 +89,19 @@ code {
 .title-button {
   height: 60px;
   width: 100px;
+}
+
+.credits {
+  height: 90%;
+  width: 90%;
+  background-color: white;
+  margin: 0 auto;
+}
+
+.credits-button {
+  height: 60px;
+  width: 100px;
+  margin-top: 150px;
 }
 
 #game {
@@ -198,6 +212,8 @@ code {
 
 .score-screen {
   position: absolute;
+  display: flex;
+  flex-direction: column;
   width: 600px;
   height: 80%;
   left: 84px;
@@ -205,6 +221,23 @@ code {
   /* margin: 0 auto; */
   background-color: white;
   z-index: 4;
+  justify-content: space-around;
+  border: 2px solid black;
+}
+
+.score-screen-input {
+  height: 40px;
+}
+
+.score-submit-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.score-submit-button {
+  height: 60px;
+  width: 100px;
 }
 
 button {

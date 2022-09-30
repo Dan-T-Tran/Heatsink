@@ -38,6 +38,7 @@ const TitleScreen = (props) => {
       <div className='title-buttons'>
         <button className='title-button' name='game' onClick={handleButton}>Start</button>
         <button className='title-button' name='leaderboard' onClick={handleButton}>Leaderboard</button>
+        <button className='title-button' name='credits' onClick={handleButton}>Credits</button>
         <button className='title-button' name='exit' onClick={handleButton}>Exit</button>
       </div>
     </div>

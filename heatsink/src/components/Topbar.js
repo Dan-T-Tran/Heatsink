@@ -3,7 +3,7 @@ const Topbar = () => {
 
   return (
     <div className='topbar'>
-      Under Construction! Oh no!
+      <h1>🔥 Games n' Stuff 🔥</h1>
     </div>
   )
 };

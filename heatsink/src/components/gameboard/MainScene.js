@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import store from '../../store';
 import Mook from './enemy/Mook.js';
+import DamageUp from './weapons/DamageUp.js';
 import Normal from './weapons/Normal.js';
 import Beam from './weapons/Beam.js';
 import Melee from './weapons/Melee.js';
@@ -48,6 +49,7 @@ class MainScene extends Phaser.Scene {
     this.weaponsPointer = 0;
     this.weaponSwitch = 0;
     this.difficultyTimer = null;
+    this.damageUpCounter = 60;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.enemyHitPierce = this.enemyHitPierce.bind(this);
@@ -57,6 +59,8 @@ class MainScene extends Phaser.Scene {
     this.shoot = this.shoot.bind(this);
     this.shootBomb = this.shootBomb.bind(this);
     this.bombHit = this.bombHit.bind(this);
+    this.getDamageUp = this.getDamageUp.bind(this);
+    this.checkDamageUp = this.checkDamageUp.bind(this);
   }
 
   preload() {
@@ -66,11 +70,14 @@ class MainScene extends Phaser.Scene {
     this.load.spritesheet('gundam', './assets/gundam-sprites.png',
     { frameWidth: 26, frameHeight: 31});
     this.load.image('zaku', './assets/zaku.png');
+    this.load.image('zakuLeft', './assets/zakuYellowLeft.png');
+    this.load.image('zakuRight', './assets/zakuYellowRight.png');
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('beam', './assets/beam.png');
     this.load.image('melee', './assets/wave.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
     this.load.image('shield', './assets/shield.png');
+    this.load.image('damageUp', './assets/damageUp.png');
 
     this.load.audio('bgm', './assets/music/bgm.mp3');
     this.load.audio('damage', './assets/sound/se_tan00.wav');
@@ -82,6 +89,8 @@ class MainScene extends Phaser.Scene {
     this.load.audio('beamSpark', './assets/sound/se_nep00.wav');
     this.load.audio('block', './assets/sound/se_powerup.wav');
     this.load.audio('powerup', './assets/sound/se_power1.wav');
+    this.load.audio('damageUpSpawn', './assets/sound/se_bonus.wav');
+    this.load.audio('damageUpGet', './assets/sound/se_extend.wav');
     this.load.audio('cooldown', './assets/sound/se_kira02.wav');
     this.load.audio('invulnerability', './assets/sound/se_timeout.wav');
     this.load.audio('death', './assets/sound/se_pldead00.wav');
@@ -114,6 +123,8 @@ class MainScene extends Phaser.Scene {
     this.sounds.beamSpark = this.sound.add('beamSpark');
     this.sounds.block = this.sound.add('block');
     this.sounds.powerup = this.sound.add('powerup');
+    this.sounds.damageUpSpawn = this.sound.add('damageUpSpawn');
+    this.sounds.damageUpGet = this.sound.add('damageUpGet');
     this.sounds.cooldown = this.sound.add('cooldown');
     this.sounds.invulnerability = this.sound.add('invulnerability');
     this.sounds.death = this.sound.add('death');
@@ -162,6 +173,7 @@ class MainScene extends Phaser.Scene {
     this.bomb = this.physics.add.group();
     this.enemy = this.physics.add.group();
     this.enemyBullet = this.physics.add.group();
+    this.damageUp = this.physics.add.group();
 
     // Add collision logic
     this.physics.add.overlap(this.enemy, this.bullet, this.enemyHit);
@@ -170,6 +182,7 @@ class MainScene extends Phaser.Scene {
     this.physics.add.overlap(this.blocker, this.enemyBullet, this.blockHit);
     this.physics.add.overlap(this.bomb, this.enemyBullet, this.bombBlock);
     this.physics.add.overlap(this.enemy, this.bomb, this.bombHit);
+    this.physics.add.overlap(this.player, this.damageUp, this.getDamageUp);
 
     // Add emitter that follows player for style
     let particles = this.add.particles('enemyBullet');
@@ -198,13 +211,15 @@ class MainScene extends Phaser.Scene {
 
   enemyHit(enemy, bullet) {
     let state = store.getState();
-    enemy.health -= bullet.damage * (state.heat ** 1.05);
+    enemy.health -= (bullet.damage * (state.heat ** 1.05) + state.damageUp);
     if (enemy.health > 0) {
       this.sounds.enemyDamage.play();
       bullet.destroy();
     }
 
     if (enemy.health <= 0) {
+      this.damageUpCounter--;
+      this.checkDamageUp(enemy);
       bullet.destroy();
       enemy.destroy();
       store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
@@ -219,7 +234,7 @@ class MainScene extends Phaser.Scene {
 
     let state = store.getState();
     if (enemy.health > 0 && !enemy.hitByPierce) {
-      enemy.health -= bullet.damage * (state.heat ** 1.05);
+      enemy.health -= (bullet.damage * (state.heat ** 1.05) + state.damageUp);
       enemy.hitByPierce = true;
       this.sounds.enemyDamage.play();
       this.time.addEvent({
@@ -229,6 +244,8 @@ class MainScene extends Phaser.Scene {
     }
 
     if (enemy.health <= 0) {
+      this.damageUpCounter--;
+      this.checkDamageUp(enemy);
       enemy.destroy();
       this.sounds.enemyDeath.play();
       store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
@@ -254,11 +271,27 @@ class MainScene extends Phaser.Scene {
     }
 
     if (enemy.health <= 0) {
+      this.damageUpCounter--;
+      this.checkDamageUp(enemy);
       enemy.destroy();
       this.sounds.enemyDeath.play();
       store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
     }
   }
+
+  getDamageUp(player, damageUp) {
+    this.sounds.damageUpGet.play();
+    store.dispatch({ type:'damageUp' });
+    damageUp.destroy();
+  };
+
+  checkDamageUp(enemy) {
+    if (this.damageUpCounter <= 0) {
+      this.damageUpCounter = 100;
+      new DamageUp({ scene: this, x: enemy.x, y: enemy.y });
+      this.sounds.damageUpSpawn.play()
+    }
+  };
 
   playerHit(player, enemyBullet) {
     enemyBullet.disableBody(true, true);

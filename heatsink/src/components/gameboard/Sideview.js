@@ -5,7 +5,8 @@ const Sideview = () => {
   const health = useSelector((state) => state.health);
   const score = useSelector((state) => state.score);
   const heat = useSelector((state) => state.heat);
-  // const cooldown = useSelector((state) => state.cooldown);
+  const weapon = useSelector((state) => state.weapon);
+  const damageUp = useSelector((state) => state.damageUp);
   const difficulty = useSelector((state) => state.difficulty);
 
   const renderScore = () => {
@@ -23,18 +24,17 @@ const Sideview = () => {
 
   return (
     <div id='sideview'>
-      <h1>Score: {renderScore()}</h1>
-      <h1>Health: {health}</h1>
+      <h2 style={{marginBottom: 0}}><u>Score</u></h2>
+      <h2 style={{marginTop: 0}}>{renderScore()}</h2>
+      <h2 style={{marginBottom: '2px'}}>Health: {health}</h2>
       {renderHealthBar()}
-      <h1>Heat: {Math.floor(heat * 100)}%</h1>
-      {/* <h1>Cooldown: {Math.floor(cooldown)}</h1> */}
-      <h1>Difficulty: {difficulty}</h1>
+      <h2>Heat: {Math.floor(heat * 100)}%</h2>
+      <h2>Difficulty: {difficulty}</h2>
+      <h2>Weapon: {weapon}</h2>
+      <h2>Damage Boosters: {damageUp}</h2>
       <SideLeaderboard />
     </div>
   );
 };
 
 export default Sideview;
-
-//transparent component
-//should render at the right side of the parent game component

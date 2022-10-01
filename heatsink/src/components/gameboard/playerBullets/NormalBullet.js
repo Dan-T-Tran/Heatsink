@@ -7,6 +7,8 @@ class NormalBullet extends Bullet {
     this.setTexture('bullet');
     this.acceleration = 0;
     this.damage = config.keyDown ? 7 : 4;
+    this.body.sourceWidth = 9;
+    this.body.sourceHeight = 15;
   }
 
   preUpdate(time, delta) {

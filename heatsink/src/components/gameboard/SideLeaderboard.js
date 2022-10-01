@@ -23,14 +23,14 @@ const SideLeaderboard = () => {
         // topPlayers = null;
         break;
       }
-      topPlayers.push(<h3 key = {i + leaderboard[i].score}>{i + 1} | {leaderboard[i].name} - {leaderboard[i].score}</h3>)
+      topPlayers.push(<h4 key = {i + leaderboard[i].score}>{i + 1} | {leaderboard[i].name} - {leaderboard[i].score}</h4>)
     }
     return topPlayers;
   }
 
   return (
     <>
-      <h1><u>Leaderboard</u></h1>
+      <h2><u>Leaderboard</u></h2>
       {renderLeaderboard()}
     </>
   )

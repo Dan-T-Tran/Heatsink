@@ -3,18 +3,22 @@ import { createStore } from 'redux';
 const reducerFn = (state = {
   score: 0,
   health: 100,
-  heat: 3,
+  heat: 1,
   cooldown: 0,
   difficulty: 1,
+  weapon: 'Normal',
+  damageUp: 0,
   gameState: null,
 }, action) => {
   if (action.type === 'initialize') {
     return ({...state,
       score: 0,
       health: 100,
-      heat: 3,
+      heat: 1,
       cooldown: 0,
       difficulty: 1,
+      weapon: 'Normal',
+      damageUp: 0,
       volume: 1,
       gameState: 'game',
     });
@@ -83,6 +87,14 @@ const reducerFn = (state = {
 
   if (action.type === 'exit') {
     return ({...state, gameState: null});
+  }
+
+  if (action.type === 'weaponSwitch') {
+    return ({...state, weapon: action.payload});
+  }
+
+  if (action.type === 'damageUp') {
+    return ({...state, damageUp : state.damageUp + 1 })
   }
 
   return state;

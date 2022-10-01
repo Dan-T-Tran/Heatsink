@@ -10,6 +10,8 @@ class MeleeBullet extends Phaser.Physics.Arcade.Sprite {
     this.dx = config.dx;
     this.dy = config.dy;
     this.setVelocity(config.dx, config.dy);
+    this.body.sourceWidth = 75;
+    this.body.sourceHeight = 41;
     this.scaleX = config.keyDown ? 1 * (config.heat ** 1.2 / config.heat) : 0.75;
     this.angle = Phaser.Math.RadToDeg(Phaser.Math.Angle.Between(this.x, this.y, this.x + this.dx, this.y + this.dy)) + 90;
 
@@ -17,7 +19,7 @@ class MeleeBullet extends Phaser.Physics.Arcade.Sprite {
     this.damage = config.keyDown ? 12 : 9;
 
     const timer = config.scene.time.addEvent({
-      delay: 250,
+      delay: 350,
       callback: (() => this.destroy()),
     });
     this.on('destroy', () => {

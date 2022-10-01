@@ -4,11 +4,12 @@ import Leaderboard from './Leaderboard.js';
 import Credits from './Credits.js';
 import Sideview from './Sideview.js';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import audio from '../../assets/titleScreen.mp3';
 
 const Game = () => {
   const gameState = useSelector((state) => state.gameState)
+  const dispatch = useDispatch();
   const [titleBgm] = useState(new Audio(audio));
 
   useEffect(() => {
@@ -45,9 +46,14 @@ const Game = () => {
     }
   }
 
+  const handleExit = () => {
+    dispatch({ type: 'exit' })
+  }
+
   return (
     <>
       <div className='overlay'></div>
+      <div className='overlay-exit' onClick={handleExit}><h4>X</h4></div>
       <div id='game'>
         {renderScreen()}
       </div>

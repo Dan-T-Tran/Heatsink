@@ -3,7 +3,7 @@ import { createStore } from 'redux';
 const reducerFn = (state = {
   score: 0,
   health: 100,
-  heat: 1,
+  heat: 3,
   cooldown: 0,
   difficulty: 1,
   gameState: null,
@@ -12,7 +12,7 @@ const reducerFn = (state = {
     return ({...state,
       score: 0,
       health: 100,
-      heat: 1,
+      heat: 3,
       cooldown: 0,
       difficulty: 1,
       volume: 1,

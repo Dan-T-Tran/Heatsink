@@ -69,7 +69,7 @@ const ScoreScreen = () => {
       </div>
       <div className='score-submit-buttons'>
         <button type='submit' className='score-submit-button' name='forward' onClick={handleSubmit}>Submit</button>
-        <button type='submit' className='score-submit-button' name='back' onClick={handleSubmit}>Exit</button>
+        <button type='submit' className='score-submit-button' name='back' onClick={handleSubmit}>Back to Title</button>
       </div>
     </div>
     </>

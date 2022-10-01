@@ -16,19 +16,22 @@ code {
 .App {
   display: flex;
   flex-direction: column;
-  width: 1500px;
+  width: 1770px;
   margin: 0 auto;
 }
 
 .topbar {
-  width: 1500px;
+  width: 1770px;
   height: 100px;
   background-color: white;
   margin-bottom: 20px;
 }
 
 .main-view {
-  width: 1500px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 1770px;
   height: 1000px;
   background-color: white;
 }
@@ -51,10 +54,12 @@ code {
 
 .game-title {
   margin: 0 0 5px 0;
+  -webkit-text-stroke: 0.1px black;
+  color: white;
 }
 
 .game-thumbnail {
-
+  border: 1px solid black;
 }
 
 .game-description {
@@ -62,6 +67,7 @@ code {
   width: 80%;
   height: 60px;
   margin: 0 auto;
+  border: 1px solid black;
 }
 
 .title-screen {
@@ -72,12 +78,14 @@ code {
   margin: 0 auto;
   background-color: gray;
   justify-content: space-around;
+  border: 1px solid black;
 }
 
 .title-details {
   background-color: white;
   width: 90%;
   margin: 0 auto;
+  border: 1px solid black;
 }
 
 .title-buttons {
@@ -96,6 +104,7 @@ code {
   width: 90%;
   background-color: white;
   margin: 0 auto;
+  border: 1px solid black;
 }
 
 .credits-button {
@@ -121,6 +130,7 @@ code {
   background: url('../public/assets/background.jpg') no-repeat;
   background-size: cover;
   z-index: 3;
+  border: 5px solid rgb(223, 183, 110);
 }
 
 @keyframes animate {
@@ -170,6 +180,29 @@ code {
   z-index: 2;
 }
 
+.overlay-exit {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  left: 75%;
+  width: 40px;
+  height: 40px;
+  background-color: red;
+  text-align: center;
+  z-index: 5;
+  align-items: center;
+  border: 2px solid black;
+}
+
+.overlay-exit:hover {
+  cursor:pointer;
+  background-color: rgb(247, 92, 92);
+}
+
+.overlay-exit>h4 {
+  margin: 0;
+}
+
 .leaderboard {
   display: flex;
   flex-direction: column;
@@ -177,6 +210,7 @@ code {
   height: 90%;
   margin: 0 auto;
   background-color: gray;
+  border: 1px solid black;
 }
 
 .leaderboard-details {
@@ -184,6 +218,7 @@ code {
   height: 70%;
   background-color: white;
   margin: 20px auto;
+  border: 1px solid black;
 }
 
 .leaderboard-buttons {

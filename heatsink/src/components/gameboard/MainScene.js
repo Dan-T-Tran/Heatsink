@@ -1,19 +1,30 @@
 import Phaser from 'phaser';
 import store from '../../store';
-import BigBullet from './playerBullets/BigBullet.js';
 import Mook from './enemy/Mook.js';
 import Normal from './weapons/Normal.js';
 import Beam from './weapons/Beam.js';
 import Melee from './weapons/Melee.js';
+import BigBullet from './bombs/BigBullet.js';
+import BeamSpark from './bombs/BeamSpark.js';
+import MeleeSwirl from './bombs/MeleeSwirl.js';
 
 /*
 EXTRAS:
 
-Credit screen (can delegate to the README)
 Extra enemy types
-Extra bullet types
 Maybe a boss somewhere in there
 Find more sprites?
+
+TO DO BEFORE ATTEMPT DEPLOYMENT:
+
+Bomb types according to weapon
+Extra enemy types
+  Bunch of mooks that circle around player
+  Big boss that shoots spiral bullets
+  Maybe a helix-shot enemy to encourage blocking out of it?
+Droppable permanent damage upgrade to help keep up with difficulty
+Fix up side bar design
+
 */
 
 class MainScene extends Phaser.Scene {
@@ -65,8 +76,10 @@ class MainScene extends Phaser.Scene {
     this.load.audio('damage', './assets/sound/se_tan00.wav');
     this.load.audio('shoot', './assets/sound/se_plst00.wav');
     this.load.audio('shootBeam', './assets/sound/se_lazer01.wav');
+    this.load.audio('shootMelee', './assets/sound/se_slash.wav');
     this.load.audio('switchWeapon', './assets/sound/se_shutter.wav');
-    this.load.audio('bomb', './assets/sound/se_gun00.wav');
+    this.load.audio('bigBullet', './assets/sound/se_gun00.wav');
+    this.load.audio('beamSpark', './assets/sound/se_nep00.wav');
     this.load.audio('block', './assets/sound/se_powerup.wav');
     this.load.audio('powerup', './assets/sound/se_power1.wav');
     this.load.audio('cooldown', './assets/sound/se_kira02.wav');
@@ -95,8 +108,10 @@ class MainScene extends Phaser.Scene {
     this.sounds.damage = this.sound.add('damage');
     this.sounds.shoot = this.sound.add('shoot');
     this.sounds.shootBeam = this.sound.add('shootBeam');
+    this.sounds.shootMelee = this.sound.add('shootMelee');
     this.sounds.switchWeapon = this.sound.add('switchWeapon');
-    this.sounds.bomb = this.sound.add('bomb');
+    this.sounds.bigBullet = this.sound.add('bigBullet');
+    this.sounds.beamSpark = this.sound.add('beamSpark');
     this.sounds.block = this.sound.add('block');
     this.sounds.powerup = this.sound.add('powerup');
     this.sounds.cooldown = this.sound.add('cooldown');
@@ -286,11 +301,20 @@ class MainScene extends Phaser.Scene {
     let heat = store.getState().heat;
     this.reload = this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, this.buttons.keys[16].isDown);
 
-    if (this.weapons[this.weaponsPointer]() === 'Beam') {
-      this.sounds.shootBeam.play();
-    } else {
-      this.reload = this.reload * (heat / (heat ** 1.35))
-      this.sounds.shoot.play();
+    switch(this.weapons[this.weaponsPointer]()) {
+      case 'Normal':
+        this.reload = this.reload * (heat / (heat ** 1.35))
+        this.sounds.shoot.play();
+        break;
+      case 'Beam':
+        this.sounds.shootBeam.play();
+        break;
+      case 'Melee':
+        this.reload = this.reload * (heat / (heat ** 1.35))
+        this.sounds.shootMelee.play();
+        break;
+      default:
+        return;
     }
   }
 
@@ -311,12 +335,41 @@ class MainScene extends Phaser.Scene {
   }
 
   shootBomb() {
-    if (store.getState().heat <= 1.2) {
+    let heat = store.getState().heat;
+    if (heat <= 1.2) {
       return;
     }
 
-    this.sounds.bomb.play();
-    new BigBullet({ scene: this, x: this.player.x, y: this.player.y - 10, key: 'bullet', group: this.bomb });
+    this.invulnerable = 200;
+
+    switch(this.weapons[this.weaponsPointer]()) {
+      case 'Normal':
+        this.sounds.bigBullet.play();
+        new BigBullet({ scene: this, x: this.player.x, y: this.player.y - 10, dx: 0, dy: -500, heat: heat });
+        new BigBullet({ scene: this, x: this.player.x - (5 * heat), y: this.player.y - 10, dx: -300 * ((heat ** 1.2) / heat), dy: -400, heat: heat, direction: 'left' });
+        new BigBullet({ scene: this, x: this.player.x + (5 * heat), y: this.player.y - 10, dx: 300 * ((heat ** 1.2) / heat), dy: -400, heat: heat, direction: 'right' });
+        break;
+      case 'Beam':
+        this.sounds.beamSpark.play();
+        this.time.addEvent({
+          delay: 10,
+          callback: (() => new BeamSpark({ scene: this, x: this.player.x, y: this.player.y - 20, dx: 0, dy: -600, heat: heat })),
+          repeat: 320,
+        })
+        break;
+      case 'Melee':
+        this.sounds.shootMelee.play()
+        new MeleeSwirl({ scene: this, x: this.player.x, y: this.player.y + 100, dx: 0, dy: -600, heat: heat, direction: 'left' });
+        new MeleeSwirl({ scene: this, x: this.player.x, y: this.player.y - 100, dx: 0, dy: -600, heat: heat, direction: 'right' });
+        new MeleeSwirl({ scene: this, x: this.player.x, y: this.player.y - 100, dx: 0, dy: -600, heat: heat, direction: 'left', half: true });
+        new MeleeSwirl({ scene: this, x: this.player.x, y: this.player.y + 100, dx: 0, dy: -600, heat: heat, direction: 'right', half: true });
+        this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, true);
+        this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, false);
+        break;
+      default:
+        return;
+    }
+
     store.dispatch({type: 'bomb'});
   }
 
@@ -347,7 +400,7 @@ class MainScene extends Phaser.Scene {
 
   blockHit(blocker, enemyBullet) {
     let previousHeat = store.getState().heat;
-    store.dispatch({type: 'block', payload: enemyBullet.damage / 400});
+    store.dispatch({type: 'block', payload: enemyBullet.weight / 100});
     let currentHeat = store.getState().heat;
     if ((previousHeat < 2 && currentHeat >= 2) || (previousHeat < 3 && currentHeat >= 3)) {
       this.sounds.powerup.play();

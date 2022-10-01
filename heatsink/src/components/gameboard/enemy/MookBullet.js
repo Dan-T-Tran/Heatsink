@@ -3,7 +3,8 @@ import EnemyBullet from './EnemyBullet.js';
 class MookBullet extends EnemyBullet {
   constructor(config) {
     super(config);
-    this.damage = 5;
+    this.damage = config.aim ? 3 : 5;
+    this.weight = config.aim ? 0.65 : 1;
     this.speed = 400;
     this.aimReload = 12;
     if (config.aim) {

@@ -26,12 +26,12 @@ const TitleScreen = (props) => {
       <div className='title-details'>
         <div>
           <h1><u>Heatsink</u></h1>
-          <p>Move with the arrow keys</p>
-          <p>Press <u>Z</u> to shoot</p>
-          <p>Press <u>X</u> to block shots and gain heat</p>
-          <p>Press <u>space</u> to heal and expel heat into a mega-shot</p>
-          <p>Press <u>C</u> to change weapons</p>
-          <p>Hold <u>shift</u> to slow down and focus your shots</p>
+          <p>Use <b>arrow keys</b> to move</p>
+          <p>Press <b>Z</b> to shoot</p>
+          <p>Press <b>X</b> to block shots and gain heat</p>
+          <p>Press <b>C</b> to change weapons</p>
+          <p>Press <b>Space</b> to heal and expel heat into a mega-shot</p>
+          <p>Hold <b>Shift</b> to slow down and focus your shots</p>
           <p>As you gain heat, your attacks become stronger and you get more points, but you will also take more damage!</p>
           <p>Difficulty increases every 15 seconds. Get as many points as you can before you get overwhelmed!</p>
         </div>

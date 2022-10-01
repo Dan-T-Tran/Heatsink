@@ -4,6 +4,7 @@ import SideLeaderboard from './SideLeaderboard.js';
 const Sideview = () => {
   const health = useSelector((state) => state.health);
   const score = useSelector((state) => state.score);
+  const kills = useSelector((state) => state.kills);
   const heat = useSelector((state) => state.heat);
   const weapon = useSelector((state) => state.weapon);
   const damageUp = useSelector((state) => state.damageUp);
@@ -26,6 +27,7 @@ const Sideview = () => {
     <div id='sideview'>
       <h2 style={{marginBottom: 0}}><u>Score</u></h2>
       <h2 style={{marginTop: 0}}>{renderScore()}</h2>
+      <h2>Kills: {kills}</h2>
       <h2 style={{marginBottom: '2px'}}>Health: {health}</h2>
       {renderHealthBar()}
       <h2>Heat: {Math.floor(heat * 100)}%</h2>

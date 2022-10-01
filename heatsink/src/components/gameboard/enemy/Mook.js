@@ -5,6 +5,7 @@ import store from '../../../store';
 class Mook extends Enemy {
   constructor(config) {
     super(config);
+    this.setTexture('zaku');
     this.health = config.health + Math.floor(((store.getState().difficulty * 2) ** 1.2));
     this.score = 200;
     this.weight = 1;

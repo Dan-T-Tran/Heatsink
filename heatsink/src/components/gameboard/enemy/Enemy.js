@@ -6,7 +6,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.scene = config.scene;
     this.x = config.x;
     this.y = config.y;
-    this.setTexture('zaku');
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);
     config.scene.enemy.add(this);

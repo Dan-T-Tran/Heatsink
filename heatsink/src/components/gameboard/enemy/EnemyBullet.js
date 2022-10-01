@@ -11,6 +11,8 @@ class EnemyBullet extends Phaser.Physics.Arcade.Sprite {
     this.damage = 5;
     config.scene.add.existing(this);
     config.scene.enemyBullet.add(this);
+    this.body.sourceWidth = 10;
+    this.body.sourceHeight = 9;
 
     this.body.collideWorldBounds = true;
     this.body.onWorldBounds = true;

@@ -5,7 +5,7 @@ class MeleeSwirl extends Bomb {
   constructor(config) {
     super(config);
       this.heat = config.heat;
-      this.damage = 30 * (this.heat ** 1.035);
+      this.damage = 35 * (this.heat ** 1.035);
       this.scaleX = config.keyDown ? 1.5 * (config.heat ** 2 / config.heat) : 1.5;
       this.setTexture('melee');
       this.body.sourceWidth = 75;

@@ -3,6 +3,7 @@ import { createStore } from 'redux';
 const reducerFn = (state = {
   score: 0,
   health: 100,
+  kills: 0,
   heat: 1,
   cooldown: 0,
   difficulty: 1,
@@ -14,6 +15,7 @@ const reducerFn = (state = {
     return ({...state,
       score: 0,
       health: 100,
+      kills: 0,
       heat: 1,
       cooldown: 0,
       difficulty: 1,
@@ -95,6 +97,10 @@ const reducerFn = (state = {
 
   if (action.type === 'damageUp') {
     return ({...state, damageUp : state.damageUp + 1 })
+  }
+
+  if (action.type === 'kill') {
+    return ({...state, kills: state.kills + 1})
   }
 
   return state;

@@ -222,8 +222,9 @@ class MainScene extends Phaser.Scene {
       this.checkDamageUp(enemy);
       bullet.destroy();
       enemy.destroy();
-      store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
       this.sounds.enemyDeath.play();
+      store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
+      store.dispatch({type: 'kill'});
     }
   }
 
@@ -249,6 +250,7 @@ class MainScene extends Phaser.Scene {
       enemy.destroy();
       this.sounds.enemyDeath.play();
       store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
+      store.dispatch({type: 'kill'});
     }
   }
 
@@ -276,6 +278,7 @@ class MainScene extends Phaser.Scene {
       enemy.destroy();
       this.sounds.enemyDeath.play();
       store.dispatch({type: 'score', payload: Math.floor(enemy.score * (state.heat ** 1.25) * ((state.difficulty ** 1.3) / state.difficulty))});
+      store.dispatch({type: 'kill'});
     }
   }
 

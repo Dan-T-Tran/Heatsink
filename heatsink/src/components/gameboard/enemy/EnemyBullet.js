@@ -14,7 +14,7 @@ class EnemyBullet extends Phaser.Physics.Arcade.Sprite {
     this.body.sourceHeight = 9;
 
     const timer = config.scene.time.addEvent({
-      delay: 6000,
+      delay: 12000,
       callback: (() => this.destroy()),
     });
     this.on('destroy', () => {

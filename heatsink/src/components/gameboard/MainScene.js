@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import store from '../../store';
 import Mook from './enemy/Mook.js';
 import SideLiner from './enemy/SideLiner.js';
+import CircleShooter from './enemy/CircleShooter.js';
 import DamageUp from './weapons/DamageUp.js';
 import Normal from './weapons/Normal.js';
 import Beam from './weapons/Beam.js';
@@ -75,6 +76,7 @@ class MainScene extends Phaser.Scene {
     this.load.image('zaku', './assets/zaku.png');
     this.load.image('zakuLeft', './assets/zakuYellowLeft.png');
     this.load.image('zakuRight', './assets/zakuYellowRight.png');
+    this.load.image('blueZaku', './assets/sortaBlueZaku.png');
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('beam', './assets/beam.png');
     this.load.image('melee', './assets/wave.png');
@@ -151,6 +153,7 @@ class MainScene extends Phaser.Scene {
 
     this.enemies.push(Mook);
     this.enemies.push(SideLiner);
+    this.enemies.push(CircleShooter);
 
     // Set up the base player properties
     this.player = this.physics.add.sprite(200, 400, 'gundam');
@@ -574,7 +577,8 @@ class MainScene extends Phaser.Scene {
       this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (difficulty / 2));
       for (let i = 0; i < Math.floor(Math.random() * 30 + 5 + ((difficulty) / 4) ** 1.05); i++) {
         let randomizer = Math.floor(Math.random() * this.enemies.length);
-        let enemy = new this.enemies[randomizer]({scene: this, difficulty: difficulty });
+        let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
+        // let enemy = new CircleShooter({ scene: this, difficulty: difficulty })
         i += enemy.weight;
       }
     }

@@ -7,9 +7,9 @@ class SideLiner extends Enemy {
     this.setPosition(this.x, this.y);
     this.direction = Math.random() > 0.5 ? 1 : -1;
     this.setTexture(this.direction === 1 ? 'zakuRight' : 'zakuLeft');
-    this.score = 300;
+    this.score = 450;
     this.weight = 0.5;
-    this.defaultReload = 200;
+    this.defaultReload = 220;
     this.reload = this.defaultReload;
     this.health = 15 + ((config.difficulty * 2) ** 1.2);
     this.x = this.direction === 1 ? Math.random() * 80 + 20 : Math.random() * 80 + 620;
@@ -22,6 +22,12 @@ class SideLiner extends Enemy {
   }
 
   shoot() {
+    new SideLinerBullet({ scene: this.scene, x: this.x, y: this.y, direction: this.direction, multiplier: 1 })
+    new SideLinerBullet({ scene: this.scene, x: this.x, y: this.y, direction: this.direction, multiplier: 2 })
+    new SideLinerBullet({ scene: this.scene, x: this.x, y: this.y, direction: this.direction, multiplier: 3 })
+  }
+
+  despawn() {
     if (
       this.y < -200 ||
       this.y > this.scene.sys.game.scale.gameSize._height + 200
@@ -30,9 +36,6 @@ class SideLiner extends Enemy {
       this.destroy();
       return;
     }
-    new SideLinerBullet({ scene: this.scene, x: this.x, y: this.y, direction: this.direction, multiplier: 1 })
-    // new SideLinerBullet({ scene: this.scene, x: this.x, y: this.y, direction: this.direction, multiplier: 2 })
-    new SideLinerBullet({ scene: this.scene, x: this.x, y: this.y, direction: this.direction, multiplier: 3 })
   }
 
   preUpdate(time, delta) {
@@ -51,6 +54,7 @@ class SideLiner extends Enemy {
     this.acceleration += 30;
     let direction = this.down ? 1 : -1;
     this.setAcceleration(0, (600 + this.acceleration) * direction);
+    this.despawn();
   };
 }
 

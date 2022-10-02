@@ -10,8 +10,8 @@ class DamageUp extends Phaser.Physics.Arcade.Sprite {
     this.body.sourceWidth = 15;
     this.body.sourceHeight = 16;
     this.scale = 1.5;
-    this.setVelocity(0, -150);
-    this.setAcceleration(0, 100);
+    this.setVelocity(0, -100);
+    this.setAcceleration(0, 60);
 
     const timer = config.scene.time.addEvent({
       delay: 10000,

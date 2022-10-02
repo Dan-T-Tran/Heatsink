@@ -3,6 +3,7 @@ import store from '../../store';
 import Mook from './enemy/Mook.js';
 import SideLiner from './enemy/SideLiner.js';
 import CircleShooter from './enemy/CircleShooter.js';
+import ConvergeBoss from './enemy/ConvergeBoss.js';
 import SpiralBoss from './enemy/SpiralBoss.js';
 import DamageUp from './weapons/DamageUp.js';
 import Normal from './weapons/Normal.js';
@@ -155,6 +156,7 @@ class MainScene extends Phaser.Scene {
     this.enemies.push(Mook);
     this.enemies.push(SideLiner);
     this.enemies.push(CircleShooter);
+    this.enemies.push(ConvergeBoss);
     this.enemies.push(SpiralBoss);
 
     // Set up the base player properties
@@ -582,8 +584,10 @@ class MainScene extends Phaser.Scene {
       for (let i = 0; i < Math.floor(Math.random() * 15 + 5 + ((difficulty) / 4) ** 1.05); i++) {
         let randomizer = Math.floor(Math.random() * this.enemies.length);
         let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
-        let randomChecker = Math.random() * 10.5;
-        if (randomChecker > enemy.weight) {
+
+        // let randomChecker = (Math.random() * 10.5) + ((difficulty ** 1.2) / difficulty); // lower chance of higher-tier enemies spawning
+        let randomChecker = (enemy.weight * (difficulty / (difficulty ** 1.2)) * Math.random());
+        if (randomChecker < 0.08) {
           i += enemy.weight;
         } else {
           enemy.destroy();

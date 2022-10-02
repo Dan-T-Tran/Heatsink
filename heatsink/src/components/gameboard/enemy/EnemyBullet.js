@@ -8,19 +8,18 @@ class EnemyBullet extends Phaser.Physics.Arcade.Sprite {
     this.y = config.y;
     this.setTexture('enemyBullet');
     this.setPosition(config.x, config.y);
-    this.damage = 5;
     config.scene.add.existing(this);
     config.scene.enemyBullet.add(this);
     this.body.sourceWidth = 10;
     this.body.sourceHeight = 9;
 
-    this.body.collideWorldBounds = true;
-    this.body.onWorldBounds = true;
-    this.body.world.on('worldbounds', ((body) => {
-      if (body.gameObject === this) {
-        this.destroy();
-      }
-    }))
+    const timer = config.scene.time.addEvent({
+      delay: 6000,
+      callback: (() => this.destroy()),
+    });
+    this.on('destroy', () => {
+      timer.remove();
+    });
   }
 
 };

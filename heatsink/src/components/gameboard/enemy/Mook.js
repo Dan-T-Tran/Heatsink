@@ -1,14 +1,14 @@
 import Enemy from './Enemy.js';
 import MookBullet from './MookBullet.js';
-import store from '../../../store';
 
 class Mook extends Enemy {
   constructor(config) {
     super(config);
+    this.setPosition(this.x, this.y);
     this.setTexture('zaku');
-    this.health = config.health + Math.floor(((store.getState().difficulty * 2) ** 1.2));
+    this.health = 20 + ((config.difficulty * 2) ** 1.2);
     this.score = 200;
-    this.weight = 1;
+    this.weight = 0;
     this.defaultReload = 80;
     this.reload = this.defaultReload;
     this.setVelocityY(300);

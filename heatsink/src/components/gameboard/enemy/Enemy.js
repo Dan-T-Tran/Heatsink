@@ -4,9 +4,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y);
     this.scene = config.scene;
-    this.x = config.x;
-    this.y = config.y;
-    this.setPosition(config.x, config.y);
+    this.x = config.x || (Math.random() * 680 + 20);
+    this.y = config.y || (-50 - Math.random() * 80);
     config.scene.add.existing(this);
     config.scene.enemy.add(this);
 

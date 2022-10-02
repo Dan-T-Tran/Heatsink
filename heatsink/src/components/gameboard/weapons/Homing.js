@@ -6,8 +6,8 @@ const Homing = (scene, x, y, heat, keyDown) => {
   }
 
   if (keyDown) {
-    new HomingBullet( {scene: scene, x: x, y: y , dx: 0, dy: -200, heat: heat, keyDown: keyDown } )
-    new HomingBullet( {scene: scene, x: x, y: y , dx: 0, dy: -200, heat: heat, keyDown: keyDown } )
+    new HomingBullet( {scene: scene, x: x, y: y , dx: -10, dy: -190, heat: heat, keyDown: keyDown } )
+    new HomingBullet( {scene: scene, x: x, y: y , dx: 10, dy: -190, heat: heat, keyDown: keyDown } )
     if (heat >= 2) {
       new HomingBullet( {scene: scene, x: x, y: y , dx: -30, dy: -160, heat: heat, keyDown: keyDown } )
       new HomingBullet( {scene: scene, x: x, y: y , dx: 30, dy: -160, heat: heat, keyDown: keyDown } )

@@ -9,6 +9,7 @@ import Homing from './weapons/Homing.js';
 import BigBullet from './bombs/BigBullet.js';
 import BeamSpark from './bombs/BeamSpark.js';
 import MeleeSwirl from './bombs/MeleeSwirl.js';
+import HomingBall from './bombs/HomingBall.js';
 
 /*
 EXTRAS:
@@ -77,6 +78,7 @@ class MainScene extends Phaser.Scene {
     this.load.image('beam', './assets/beam.png');
     this.load.image('melee', './assets/wave.png');
     this.load.image('missile', './assets/missile.png');
+    this.load.image('bigBall', './assets/bigBall.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
     this.load.image('shield', './assets/shield.png');
     this.load.image('damageUp', './assets/damageUp.png');
@@ -403,6 +405,16 @@ class MainScene extends Phaser.Scene {
         new MeleeSwirl({ scene: this, x: this.player.x, y: this.player.y + 100, dx: 0, dy: -600, heat: heat, direction: 'right', half: true });
         this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, true);
         this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, false);
+        break;
+      case 'Homing':
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: -200, dy: 0, heat: heat });
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: 200, dy: 0, heat: heat });
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: 0, dy: -200, heat: heat });
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: 0, dy: 200, heat: heat });
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: -140, dy: -140, heat: heat });
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: 140, dy: -140, heat: heat });
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: -140, dy: 140, heat: heat });
+        new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: 140, dy: 140, heat: heat });
         break;
       default:
         return;

@@ -3,6 +3,7 @@ import store from '../../store';
 import Mook from './enemy/Mook.js';
 import SideLiner from './enemy/SideLiner.js';
 import CircleShooter from './enemy/CircleShooter.js';
+import SpiralBoss from './enemy/SpiralBoss.js';
 import DamageUp from './weapons/DamageUp.js';
 import Normal from './weapons/Normal.js';
 import Beam from './weapons/Beam.js';
@@ -18,11 +19,9 @@ EXTRAS:
 
 Extra enemy types
 Maybe a boss somewhere in there
-Find more sprites?
 
 TO DO BEFORE ATTEMPT DEPLOYMENT:
 
-Bomb types according to weapon
 Extra enemy types
   Bunch of mooks that circle around player
   Big boss that shoots spiral bullets
@@ -77,6 +76,8 @@ class MainScene extends Phaser.Scene {
     this.load.image('zakuLeft', './assets/zakuYellowLeft.png');
     this.load.image('zakuRight', './assets/zakuYellowRight.png');
     this.load.image('blueZaku', './assets/sortaBlueZaku.png');
+    this.load.image('smallShip', './assets/elmeth.png');
+    this.load.image('bigShip', './assets/ship.png');
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('beam', './assets/beam.png');
     this.load.image('melee', './assets/wave.png');
@@ -154,6 +155,7 @@ class MainScene extends Phaser.Scene {
     this.enemies.push(Mook);
     this.enemies.push(SideLiner);
     this.enemies.push(CircleShooter);
+    this.enemies.push(SpiralBoss);
 
     // Set up the base player properties
     this.player = this.physics.add.sprite(200, 400, 'gundam');
@@ -275,11 +277,13 @@ class MainScene extends Phaser.Scene {
       return;
     }
 
+    let multiplier = enemy.isBoss ? 2.5 : 1;
+
     enemy.hitByBomb = true;
 
     let state = store.getState();
 
-    enemy.health -= bomb.damage;
+    enemy.health -= (bomb.damage * multiplier);
     if (enemy.health > 0) {
       this.sounds.enemyDamage.play();
       this.time.addEvent({
@@ -575,11 +579,16 @@ class MainScene extends Phaser.Scene {
     } else {
       let difficulty = store.getState().difficulty;
       this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (difficulty / 2));
-      for (let i = 0; i < Math.floor(Math.random() * 30 + 5 + ((difficulty) / 4) ** 1.05); i++) {
+      for (let i = 0; i < Math.floor(Math.random() * 15 + 5 + ((difficulty) / 4) ** 1.05); i++) {
         let randomizer = Math.floor(Math.random() * this.enemies.length);
         let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
-        // let enemy = new CircleShooter({ scene: this, difficulty: difficulty })
-        i += enemy.weight;
+        let randomChecker = Math.random() * 10.5;
+        if (randomChecker > enemy.weight) {
+          i += enemy.weight;
+        } else {
+          enemy.destroy();
+          i--;
+        }
       }
     }
 

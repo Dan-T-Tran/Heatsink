@@ -25,7 +25,6 @@ Extra enemy types
   Bunch of mooks that circle around player
   Big boss that shoots spiral bullets
   Maybe a helix-shot enemy to encourage blocking out of it?
-Droppable permanent damage upgrade to help keep up with difficulty
 Fix up side bar design
 
 */
@@ -43,6 +42,7 @@ class MainScene extends Phaser.Scene {
     this.pierceBullet = null;
     this.bomb = null;
     this.reload = 0;
+    this.enemies = [];
     this.enemyInterval = 0;
     this.sounds = {};
     this.circle = null;
@@ -88,9 +88,11 @@ class MainScene extends Phaser.Scene {
     this.load.audio('shoot', './assets/sound/se_plst00.wav');
     this.load.audio('shootBeam', './assets/sound/se_lazer01.wav');
     this.load.audio('shootMelee', './assets/sound/se_slash.wav');
+    this.load.audio('shootMissile', './assets/sound/se_tan02.wav');
     this.load.audio('switchWeapon', './assets/sound/se_shutter.wav');
     this.load.audio('bigBullet', './assets/sound/se_gun00.wav');
     this.load.audio('beamSpark', './assets/sound/se_nep00.wav');
+    this.load.audio('homingBomb', './assets/sound/se_power0.wav');
     this.load.audio('block', './assets/sound/se_powerup.wav');
     this.load.audio('powerup', './assets/sound/se_power1.wav');
     this.load.audio('damageUpSpawn', './assets/sound/se_bonus.wav');
@@ -122,9 +124,11 @@ class MainScene extends Phaser.Scene {
     this.sounds.shoot = this.sound.add('shoot');
     this.sounds.shootBeam = this.sound.add('shootBeam');
     this.sounds.shootMelee = this.sound.add('shootMelee');
+    this.sounds.shootMissile = this.sound.add('shootMissile');
     this.sounds.switchWeapon = this.sound.add('switchWeapon');
     this.sounds.bigBullet = this.sound.add('bigBullet');
     this.sounds.beamSpark = this.sound.add('beamSpark');
+    this.sounds.homingBomb = this.sound.add('homingBomb');
     this.sounds.block = this.sound.add('block');
     this.sounds.powerup = this.sound.add('powerup');
     this.sounds.damageUpSpawn = this.sound.add('damageUpSpawn');
@@ -353,6 +357,9 @@ class MainScene extends Phaser.Scene {
       case 'Melee':
         this.sounds.shootMelee.play();
         break;
+      case 'Homing':
+        this.sounds.shootMissile.play();
+        break
       default:
         return;
     }
@@ -407,6 +414,7 @@ class MainScene extends Phaser.Scene {
         this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, false);
         break;
       case 'Homing':
+        this.sounds.homingBomb.play();
         new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: -200, dy: 0, heat: heat });
         new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: 200, dy: 0, heat: heat });
         new HomingBall({ scene: this, x: this.player.x, y: this.player.y, dx: 0, dy: -200, heat: heat });

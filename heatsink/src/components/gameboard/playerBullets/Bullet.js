@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 class Bullet extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y);
+    this.scene = config.scene;
     this.setPosition(config.x, config.y);
     config.scene.add.existing(this);
     config.scene.bullet.add(this);

@@ -5,6 +5,7 @@ import DamageUp from './weapons/DamageUp.js';
 import Normal from './weapons/Normal.js';
 import Beam from './weapons/Beam.js';
 import Melee from './weapons/Melee.js';
+import Homing from './weapons/Homing.js';
 import BigBullet from './bombs/BigBullet.js';
 import BeamSpark from './bombs/BeamSpark.js';
 import MeleeSwirl from './bombs/MeleeSwirl.js';
@@ -75,6 +76,7 @@ class MainScene extends Phaser.Scene {
     this.load.image('bullet', './assets/bullet.png');
     this.load.image('beam', './assets/beam.png');
     this.load.image('melee', './assets/wave.png');
+    this.load.image('missile', './assets/missile.png');
     this.load.image('enemyBullet', './assets/enemyBullet.png');
     this.load.image('shield', './assets/shield.png');
     this.load.image('damageUp', './assets/damageUp.png');
@@ -138,6 +140,7 @@ class MainScene extends Phaser.Scene {
     this.weapons.push(Normal);
     this.weapons.push(Beam);
     this.weapons.push(Melee);
+    this.weapons.push(Homing);
 
     // Set up the base player properties
     this.player = this.physics.add.sprite(200, 400, 'gundam');
@@ -336,17 +339,16 @@ class MainScene extends Phaser.Scene {
 
     let heat = store.getState().heat;
     this.reload = this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, this.buttons.keys[16].isDown);
+    this.reload = this.reload * (heat / (heat ** 1.35))
 
     switch(this.weapons[this.weaponsPointer]()) {
       case 'Normal':
-        this.reload = this.reload * (heat / (heat ** 1.35))
         this.sounds.shoot.play();
         break;
       case 'Beam':
         this.sounds.shootBeam.play();
         break;
       case 'Melee':
-        this.reload = this.reload * (heat / (heat ** 1.35))
         this.sounds.shootMelee.play();
         break;
       default:

@@ -1,9 +1,9 @@
 import Enemy from './Enemy.js';
 
-class SideLiner extends Enemy {
+class ConvergeBoss extends Enemy {
   constructor(config) {
     super(config);
   }
 }
 
-export default SideLiner;
+export default ConvergeBoss;

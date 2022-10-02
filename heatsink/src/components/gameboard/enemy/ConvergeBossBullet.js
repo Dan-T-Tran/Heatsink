@@ -1,10 +1,10 @@
 import EnemyBullet from './EnemyBullet';
 
-class SideLinerBullet extends EnemyBullet {
+class ConvergeBossBullet extends EnemyBullet {
   constructor(config) {
     super(config);
   }
 
 }
 
-export default SideLinerBullet;
+export default ConvergeBossBullet;

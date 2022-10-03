@@ -36,6 +36,7 @@ class MainScene extends Phaser.Scene {
     this.pierceBullet = null;
     this.bomb = null;
     this.reload = 0;
+    this.cooldown = 0;
     this.enemies = [];
     this.enemyInterval = 0;
     this.sounds = {};
@@ -257,7 +258,8 @@ class MainScene extends Phaser.Scene {
 
   enemyHit(enemy, bullet) {
     let state = store.getState();
-    enemy.health -= (bullet.damage * (state.heat ** 1.05) + state.damageUp);
+    let multiplier = bullet.isBeam ? 0.4 : 1;
+    enemy.health -= (bullet.damage * (state.heat ** 1.05) + (state.damageUp * multiplier));
     if (enemy.health > 0) {
       this.sounds.enemyDamage.play();
       bullet.destroy();
@@ -338,8 +340,15 @@ class MainScene extends Phaser.Scene {
 
   checkDamageUp(enemy) {
     if (this.damageUpCounter <= 0) {
-      this.damageUpCounter = 100;
-      new DamageUp({ scene: this, x: enemy.x, y: enemy.y });
+      this.damageUpCounter = 60;
+      let boundX = enemy.x;
+      if (enemy.x <= 50) {
+        boundX = 50;
+      }
+      if (enemy.x >= 670) {
+        boundX = 670;
+      }
+      new DamageUp({ scene: this, x: boundX, y: enemy.y });
       this.sounds.damageUpSpawn.play()
     }
   };
@@ -353,17 +362,18 @@ class MainScene extends Phaser.Scene {
     }
 
     let state = store.getState();
-    if (state.health - (enemyBullet.damage * (state.heat ** 1.5) * ((state.difficulty ** 1.2) / state.difficulty)) > 0) {
+    console.log(state);
+    let damage = ((enemyBullet.damage * (state.heat ** 1.15) * ((state.difficulty ** 1.15) / state.difficulty)) * ((state.damageUp + 1) / ((state.damageUp + 1) ** 1.2)))
+    console.log(damage);
+    if (state.health - damage > 0) {
       this.sounds.damage.play();
       this.invulnerable = 200;
       this.player.alpha = 0.5;
     }
 
-    store.dispatch({type: 'hurt', payload: enemyBullet.damage * (state.heat ** 1.5) * ((state.difficulty ** 1.2) / state.difficulty)});
+    store.dispatch({type: 'hurt', payload: damage });
     if (store.getState().health <= 0) {    this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT); //16
       this.input.keyboard.removeCapture([32, 37, 38, 39, 40, 67, 88, 90]);
-      // this.input.keyboard.enabled = false;
-      // this.input.keyboard.enableGlobalCapture();
       player.destroy();
       this.difficultyTimer.remove();
       // set time for 1 second to trigger gameover screen
@@ -379,14 +389,13 @@ class MainScene extends Phaser.Scene {
     }
   }
 
-  shoot() {
+  shoot(heat, damageUp) {
     if (this.reload > 0) {
       return;
     }
 
-    let heat = store.getState().heat;
     this.reload = this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, this.buttons.keys[16].isDown);
-    this.reload = this.reload * (heat / (heat ** 1.35))
+    this.reload = (this.reload * (heat / (heat ** 1.35))) * ((damageUp + 1) / ((damageUp + 1) ** 1.1));
 
     switch(this.weapons[this.weaponsPointer]()) {
       case 'Normal':
@@ -422,8 +431,7 @@ class MainScene extends Phaser.Scene {
     store.dispatch( {type:'weaponSwitch', payload:this.weapons[this.weaponsPointer]() })
   }
 
-  shootBomb() {
-    let heat = store.getState().heat;
+  shootBomb(heat) {
     if (heat <= 1.2) {
       return;
     }
@@ -440,9 +448,9 @@ class MainScene extends Phaser.Scene {
       case 'Beam':
         this.sounds.beamSpark.play();
         this.time.addEvent({
-          delay: 10,
+          delay: 20,
           callback: (() => new BeamSpark({ scene: this, x: this.player.x, y: this.player.y - 20, dx: 0, dy: -600, heat: heat })),
-          repeat: 320,
+          repeat: 160,
         })
         break;
       case 'Melee':
@@ -483,7 +491,7 @@ class MainScene extends Phaser.Scene {
     const disable = () => {
       this.blocking = false;
       this.blocker.disableBody(true, true);
-      store.dispatch({type: 'resetCooldown'});
+      this.cooldown = 100;
     }
 
     this.time.addEvent({
@@ -507,8 +515,7 @@ class MainScene extends Phaser.Scene {
     enemyBullet.destroy();
   }
 
-  healthCircleGenerator() {
-    let health = store.getState().health;
+  healthCircleGenerator(health) {
     let startAngle = Phaser.Math.DegToRad(-90);
     let finalAngle = Phaser.Math.DegToRad((359.9 * (health / 100) - 90));
     this.healthCircle.fillStyle(0x9ee6ff, 0.2)
@@ -517,7 +524,7 @@ class MainScene extends Phaser.Scene {
   }
 
   cooldownCircle() {
-    let cooldown = store.getState().cooldown;
+    let cooldown = this.cooldown;
     let startAngle = Phaser.Math.DegToRad(-90);
     let finalAngle = Phaser.Math.DegToRad(359.9 * (1 - cooldown / 100) - 90);
     this.circle.lineStyle(cooldown <= 0 ? 4 : 2, this.invulnerable ? 0xab1919 : 0xffffff, cooldown <= 0 ? 1 : 0.5);
@@ -527,32 +534,33 @@ class MainScene extends Phaser.Scene {
   }
 
   update() {
+    let state = store.getState();
     // Update cooldown indicator and health circle around player
     this.circle.clear();
     this.healthCircle.clear();
 
     // Prevent game updates once player dies
-    if (store.getState().health <= 0) {
+    if (state.health <= 0) {
       return;
     }
 
     // Update cooldown
-    if (store.getState().cooldown > 0) {
-      store.dispatch({type: 'cooldown'})
-      if (store.getState().cooldown <= 0) {
+    if (this.cooldown > 0) {
+      this.cooldown -= (0.5 - ((0.3 * ((state.heat - 1) / 2)) ** 1.2))
+      if (this.cooldown <= 0) {
         this.sounds.cooldown.play();
       }
     }
 
     // Update health circle's position with the player
-    this.healthCircleGenerator();
+    this.healthCircleGenerator(state.health);
 
     // Update blocker's position with the player
     this.blockMove();
     this.cooldownCircle();
 
     // Trigger block on X as long as cooldown is done and is not currently running
-    if (this.buttons.keys[88].isDown && store.getState().cooldown <= 0 && !this.blocking) {
+    if (this.buttons.keys[88].isDown && this.cooldown <= 0 && !this.blocking) {
       this.block();
     }
 
@@ -607,10 +615,10 @@ class MainScene extends Phaser.Scene {
 
     // Perform appropriate shooting actions on Z and space
     if (this.buttons.keys[90].isDown) {
-      this.shoot();
+      this.shoot(state.heat, state.damageUp);
     }
     if (this.buttons.keys[32].isDown) {
-      this.shootBomb();
+      this.shootBomb(state.heat);
     }
     if (this.buttons.keys[67].isDown) {
       this.switchWeapon();
@@ -620,7 +628,7 @@ class MainScene extends Phaser.Scene {
     if (this.enemyInterval > 0) {
       this.enemyInterval--;
     } else {
-      let difficulty = store.getState().difficulty;
+      let difficulty = state.difficulty;
       this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (difficulty / 2));
       for (let i = 0; i < Math.floor(Math.random() * 15 + 5 + ((difficulty) / 4) ** 1.05); i++) {
         let randomizer = Math.floor(Math.random() * this.enemies.length);
@@ -637,7 +645,7 @@ class MainScene extends Phaser.Scene {
     }
 
     // Trigger enemies sooner if there's too few enemies on screen
-    if (this.enemy.children.entries.length <= (5 + (store.getState().difficulty / 3)) * (store.getState().heat) && this.enemyInterval > 80) {
+    if (this.enemy.children.entries.length <= (5 + (state.difficulty / 3)) * (state.heat) && this.enemyInterval > 80) {
       this.enemyInterval = 30;
     }
   }

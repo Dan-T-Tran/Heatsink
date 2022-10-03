@@ -33,7 +33,7 @@ const Sideview = () => {
       <h2>Heat: {Math.floor(heat * 100)}%</h2>
       <h2>Difficulty: {difficulty}</h2>
       <h2>Weapon: {weapon}</h2>
-      <h2>Damage Boosters: {damageUp}</h2>
+      <h2>Boosters: {damageUp}</h2>
       <SideLeaderboard />
     </div>
   );

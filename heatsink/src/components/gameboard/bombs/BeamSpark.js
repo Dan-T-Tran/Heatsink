@@ -4,7 +4,7 @@ class BeamSpark extends Bomb {
   constructor(config) {
     super(config);
       this.heat = config.heat;
-      this.damage = 15 * (this.heat ** 1.035);
+      this.damage = 18 * (this.heat ** 1.035);
       this.scaleX = 1.4 * (this.heat ** 1.5 / this.heat);
       this.setTexture('beam');
       this.body.sourceWidth = 21;

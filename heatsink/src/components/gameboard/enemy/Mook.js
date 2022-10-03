@@ -13,25 +13,24 @@ class Mook extends Enemy {
     this.reload = this.defaultReload;
     this.setVelocityY(300);
     this.setAcceleration(0, -200);
-    this.aim = false;
+    this.aim = true;
     this.direction = config.x < this.scene.sys.game.scale.gameSize._width / 2 ? 1 : -1
     this.bounce = 50;
     this.leave = 400;
+    config.scene.time.addEvent({
+      delay: 2500,
+      callback: (() => this.aim = false)
+    })
   }
 
   shoot() {
     if (
       this.x < -100 ||
-      this.x > this.scene.sys.game.scale.gameSize._width + 100 ||
-      this.y < -300 ||
-      this.y > this.scene.sys.game.scale.gameSize._height + 100
+      this.x > this.scene.sys.game.scale.gameSize._width + 100
       )
     {
       this.destroy();
       return;
-    }
-    if (this.body.velocity.x === 0 && this.bounce <= 0) {
-      this.aim = true;
     }
     new MookBullet({ scene: this.scene, x: this.x, y: this.y, aim: this.aim });
   }

@@ -33,7 +33,7 @@ const TitleScreen = (props) => {
           <p>Press <b>Space</b> to heal and expel heat into a bomb</p>
           <p>Hold <b>Shift</b> to slow down and focus your shots</p>
           <p>As you gain heat, your attacks become stronger and you get more points, but you will also take more damage!</p>
-          <p>Every 60 enemies destroyed drops a damage booster that increases your damage for this run.</p>
+          <p>Every 60 enemies destroyed drops a booster that increases your damage for this run.</p>
           <p>Difficulty increases every 15 seconds. Get as many points as you can before you get overwhelmed!</p>
         </div>
       </div>

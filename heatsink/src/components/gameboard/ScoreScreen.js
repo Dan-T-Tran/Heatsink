@@ -15,12 +15,13 @@ const ScoreScreen = () => {
 
   const tips = [
     `Your blocking cooldown increases as you gain heat.`,
-    `You only need to make small movements to dodge things.`,
+    `You only need to make small movements to dodge.`,
     `Some weapons are better for certain situations than others.`,
     `Your bombs destroy any bullets they contact.`,
     `Your shield doesn't protect your back. Be careful about backing up into bullets!`,
     `You need at least 120% heat to shoot a bomb.`,
-    `Bigger enemies take extra damage from bombs.`
+    `Bigger enemies take extra damage from bombs.`,
+    `Boosters also reduce the damage you take.`
   ];
 
   useEffect(() => {

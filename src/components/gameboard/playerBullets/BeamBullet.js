@@ -5,7 +5,7 @@ class BeamBullet extends Bullet {
     super(config);
     this.setTexture('beam');
     this.isBeam = true;
-    this.damage = config.keyDown ? 2 * (config.heat ** 1.1) : 0.75;
+    this.damage = config.keyDown ? 2.2 * (config.heat ** 1.1) : 0.85;
     this.scaleX = config.keyDown ? config.heat ** 1.05 : 0.5;
     this.alpha = 0.4;
     this.body.sourceWidth = 21;

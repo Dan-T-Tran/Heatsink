@@ -12,6 +12,7 @@ const ScoreScreen = () => {
   const [pointer, setPointer] = useState([0, 0]);
   const [gameOver] = useState(new Audio(audio));
   const [tip, setTip] = useState(0);
+  const [fail, setFail] = useState(false);
 
   const tips = [
     `Your blocking cooldown increases as you gain heat.`,
@@ -60,7 +61,10 @@ const ScoreScreen = () => {
 
     await axios.post('/heatsink', data)
     .then((response) => dispatch({ type: 'screen', payload: 'leaderboard' }))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      setFail(true);
+      // console.log(err)
+    });
   };
 
   // Maybe try to set up a keyboard score submit eventually?
@@ -82,6 +86,7 @@ const ScoreScreen = () => {
         <input type='text' className='score-screen-input' onChange={handleChange} maxLength={15} placeholder='Enter name'></input>
         <h3 style={{marginTop: '20px'}}><u>Tip</u></h3>
         <p>{tips[tip]}</p>
+        {fail && <h4 style={{color: 'red'}}>Failed to submit score</h4>}
       </div>
       <div className='score-submit-buttons'>
         <button type='submit' className='score-submit-button' name='forward' onClick={handleSubmit}>Submit</button>

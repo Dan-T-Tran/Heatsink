@@ -360,9 +360,7 @@ class MainScene extends Phaser.Scene {
     }
 
     let state = store.getState();
-    console.log(state);
     let damage = ((enemyBullet.damage * (state.heat ** 1.15) * ((state.difficulty ** 1.15) / state.difficulty)) * ((state.damageUp + 1) / ((state.damageUp + 1) ** 1.2)))
-    console.log(damage);
     if (state.health - damage > 0) {
       this.sounds.damage.play();
       this.invulnerable = 200;

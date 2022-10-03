@@ -16,18 +16,10 @@ import MeleeSwirl from './bombs/MeleeSwirl.js';
 import HomingBall from './bombs/HomingBall.js';
 
 /*
-EXTRAS:
-
-Extra enemy types
-Maybe a boss somewhere in there
-
 TO DO BEFORE ATTEMPT DEPLOYMENT:
 
-Extra enemy types
-  Bunch of mooks that circle around player
-  Big boss that shoots spiral bullets
-  Maybe a helix-shot enemy to encourage blocking out of it?
 Fix up side bar design
+Add a volume slider?
 
 */
 
@@ -54,6 +46,7 @@ class MainScene extends Phaser.Scene {
     this.weaponSwitch = 0;
     this.difficultyTimer = null;
     this.damageUpCounter = 60;
+    this.bgmRepeat = -1;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.enemyHitPierce = this.enemyHitPierce.bind(this);
@@ -65,6 +58,7 @@ class MainScene extends Phaser.Scene {
     this.bombHit = this.bombHit.bind(this);
     this.getDamageUp = this.getDamageUp.bind(this);
     this.checkDamageUp = this.checkDamageUp.bind(this);
+    this.randomizeBgm = this.randomizeBgm.bind(this);
   }
 
   preload() {
@@ -88,7 +82,15 @@ class MainScene extends Phaser.Scene {
     this.load.image('shield', './assets/shield.png');
     this.load.image('damageUp', './assets/damageUp.png');
 
-    this.load.audio('bgm', './assets/music/bgm.mp3');
+    this.load.audio('bgm0', './assets/music/bgm0.mp3');
+    this.load.audio('bgm1', './assets/music/bgm1.mp3');
+    this.load.audio('bgm2', './assets/music/bgm2.mp3');
+    this.load.audio('bgm3', './assets/music/bgm3.mp3');
+    this.load.audio('bgm4', './assets/music/bgm4.mp3');
+    this.load.audio('bgm5', './assets/music/bgm5.mp3');
+    this.load.audio('bgm6', './assets/music/bgm6.mp3');
+    this.load.audio('bgm7', './assets/music/bgm7.mp3');
+
     this.load.audio('damage', './assets/sound/se_tan00.wav');
     this.load.audio('shoot', './assets/sound/se_plst00.wav');
     this.load.audio('shootBeam', './assets/sound/se_lazer01.wav');
@@ -124,7 +126,15 @@ class MainScene extends Phaser.Scene {
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
 
     // Add sounds
-    this.sounds.bgm = this.sound.add('bgm');
+    this.sounds.bgm0 = this.sound.add('bgm0');
+    this.sounds.bgm1 = this.sound.add('bgm1');
+    this.sounds.bgm2 = this.sound.add('bgm2');
+    this.sounds.bgm3 = this.sound.add('bgm3');
+    this.sounds.bgm4 = this.sound.add('bgm4');
+    this.sounds.bgm5 = this.sound.add('bgm5');
+    this.sounds.bgm6 = this.sound.add('bgm6');
+    this.sounds.bgm7 = this.sound.add('bgm7');
+
     this.sounds.damage = this.sound.add('damage');
     this.sounds.shoot = this.sound.add('shoot');
     this.sounds.shootBeam = this.sound.add('shootBeam');
@@ -144,9 +154,14 @@ class MainScene extends Phaser.Scene {
     this.sounds.enemyDamage = this.sound.add('enemyDamage');
     this.sounds.enemyDeath = this.sound.add('enemyDeath');
 
-    // this.sounds.bgm.volume = 0.2;
-    this.sounds.bgm.play.loop = true;
-    this.sounds.bgm.play();
+    for (let i = 0; i <= 7; i++) {
+      if (i === 5) {
+        continue;
+      }
+      console.log(i);
+      this.sounds[`bgm${i}`].on('complete', this.randomizeBgm)
+    }
+    this.randomizeBgm();
 
     this.weapons.push(Normal);
     this.weapons.push(Beam);
@@ -228,6 +243,16 @@ class MainScene extends Phaser.Scene {
       repeat: 98
     });
   }
+
+  randomizeBgm() {
+    let randomizer = Math.floor(Math.random() * 8);
+    if (randomizer === this.bgmRepeat) {
+      this.randomizeBgm();
+    } else {
+      this.bgmRepeat = randomizer;
+      this.sounds[`bgm${randomizer}`].play();
+    }
+  };
 
   enemyHit(enemy, bullet) {
     let state = store.getState();
@@ -344,7 +369,9 @@ class MainScene extends Phaser.Scene {
       this.time.addEvent({
         delay: 1000,
         callback: (() => {
-          this.sounds.bgm.stop();
+          for (let i = 0; i <= 7; i++) {
+            this.sounds[`bgm${i}`].stop();
+          }
           store.dispatch({type:'screen', payload: 'scoreScreen'})
         })
       });
@@ -585,7 +612,6 @@ class MainScene extends Phaser.Scene {
         let randomizer = Math.floor(Math.random() * this.enemies.length);
         let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
 
-        // let randomChecker = (Math.random() * 10.5) + ((difficulty ** 1.2) / difficulty); // lower chance of higher-tier enemies spawning
         let randomChecker = (enemy.weight * (difficulty / (difficulty ** 1.2)) * Math.random());
         if (randomChecker < 0.08) {
           i += enemy.weight;

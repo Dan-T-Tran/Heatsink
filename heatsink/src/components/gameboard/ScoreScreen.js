@@ -12,6 +12,17 @@ const ScoreScreen = () => {
   const dispatch = useDispatch();
   const [pointer, setPointer] = useState([0, 0]);
   const [gameOver] = useState(new Audio(audio));
+  const [tip, setTip] = useState(0);
+
+  const tips = [
+    `Your blocking cooldown increases as you gain heat.`,
+    `You only need to make small movements to dodge things.`,
+    `Some weapons are better for certain situations than others.`,
+    `Your bombs destroy any bullets they contact.`,
+    `Your shield doesn't protect your back. Be careful about backing up into bullets!`,
+    `You need at least 120% heat to shoot a bomb.`,
+    `Bigger enemies take extra damage from bombs.`
+  ];
 
   useEffect(() => {
     gameOver.play();
@@ -19,6 +30,8 @@ const ScoreScreen = () => {
       gameOver.currentTime = 0;
       gameOver.play();
     }, false);
+    let randomizer = Math.floor(Math.random() * tips.length);
+    setTip(randomizer);
 
     return function cleanUp() {
       gameOver.currentTime = 0;
@@ -66,6 +79,8 @@ const ScoreScreen = () => {
         <h1>GAME OVER</h1>
         <h2>Your score: {score}</h2>
         <input type='text' className='score-screen-input' onChange={handleChange} maxLength={15} placeholder='Enter name'></input>
+        <h3 style={{marginTop: '20px'}}><u>Tip</u></h3>
+        <p>{tips[tip]}</p>
       </div>
       <div className='score-submit-buttons'>
         <button type='submit' className='score-submit-button' name='forward' onClick={handleSubmit}>Submit</button>

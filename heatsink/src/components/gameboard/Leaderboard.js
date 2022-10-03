@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 const Leaderboard = (props) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
   const [page, setPage] = useState(0);
   const dispatch = useDispatch();
 
@@ -15,8 +16,12 @@ const Leaderboard = (props) => {
 
     async function fetchData() {
       const results = await axios.get('/heatsink')
+      if (!results) {
+        setFailed(true);
+      } else {
+        setLeaderboard(results.data);
+      }
       setLoading(false);
-      setLeaderboard(results.data);
     }
     fetchData();
   }, [])
@@ -52,6 +57,7 @@ const Leaderboard = (props) => {
     <div className='leaderboard'>
       <div className='leaderboard-details'>
         {loading && <h1>Loading top players. . .</h1>}
+        {failed && <h1>Failed to retrieve top players.</h1>}
         {!loading && <h1><u>Top {(page + 1) * 10} players</u></h1>}
         {!loading && <h2>Position | Name | Score | Date</h2>}
         {renderLeaderboard()}

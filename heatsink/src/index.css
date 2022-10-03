@@ -110,7 +110,15 @@ code {
 .credits-button {
   height: 60px;
   width: 100px;
-  margin-top: 150px;
+  margin-top: 80px;
+}
+
+.credits>h1 {
+  margin-bottom: 10px;
+}
+
+.credits>p {
+  margin: 3px;
 }
 
 #game {

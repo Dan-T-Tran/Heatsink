@@ -12,6 +12,13 @@ const Credits = () => {
       <h1>Sound</h1>
       <p><u>Spirit of Avarice</u> from Touhou 13: Ten Desires</p>
       <p><u>Battle of the Basement -Innocence-</u> from Touhou: Mystical Chain</p>
+      <p><u>Core</u> from Undertale || Mykah remix</p>
+      <p><u>Forest Frenzy</u> from Omori</p>
+      <p><u>高貴さと孤高のカナル</u> by 「O-Life Japan」</p>
+      <p><u>Reality</u> from Ikaruga</p>
+      <p><u>Oriens</u> from Cytus || SiivaGunner remix</p>
+      <p><u>Battle!! - Torna</u> from Xenoblade Chronicles 2: Torna</p>
+      <p><u>Undertaker</u> by IZMIZM</p>
       <p><u>Player's Score</u> from Touhou 10: Mountain of Faith</p>
       <p>Sound effects from Touhou 11: Subterranean Animism and Touhou 9.5: Shoot the Bullet</p>
       <h1>Sprites</h1>

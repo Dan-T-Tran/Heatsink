@@ -47,18 +47,6 @@ const reducerFn = (state = {
     return ({...state, health: health});
   }
 
-  if (action.type === 'cooldown') {
-    let cooldown = state.cooldown - (0.5 - ((0.3 * ((state.heat - 1) / 2)) ** 1.2));
-    if (cooldown < 0) {
-      cooldown = 0;
-    }
-    return ({...state, cooldown: cooldown});
-  }
-
-  if (action.type === 'resetCooldown') {
-    return ({...state, cooldown: 100});
-  }
-
   if (action.type === 'block') {
     let heat = state.heat;
     if (heat + action.payload >= 3) {

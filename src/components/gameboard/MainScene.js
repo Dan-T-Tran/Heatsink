@@ -66,24 +66,22 @@ class MainScene extends Phaser.Scene {
 
   preload() {
     // "this" refers to the scene
-    this.load.image('space', './assets/space.jpg');
-    this.load.image('forest', './assets/forest.jpg');
-    this.load.spritesheet('gundam', './assets/gundam-sprites.png',
+    this.load.spritesheet('gundam', './assets/sprites/gundam-sprites.png',
     { frameWidth: 26, frameHeight: 31});
-    this.load.image('zaku', './assets/zaku.png');
-    this.load.image('zakuLeft', './assets/zakuYellowLeft.png');
-    this.load.image('zakuRight', './assets/zakuYellowRight.png');
-    this.load.image('blueZaku', './assets/sortaBlueZaku.png');
-    this.load.image('smallShip', './assets/elmeth.png');
-    this.load.image('bigShip', './assets/ship.png');
-    this.load.image('bullet', './assets/bullet.png');
-    this.load.image('beam', './assets/beam.png');
-    this.load.image('melee', './assets/wave.png');
-    this.load.image('missile', './assets/missile.png');
-    this.load.image('bigBall', './assets/bigBall.png');
-    this.load.image('enemyBullet', './assets/enemyBullet.png');
-    this.load.image('shield', './assets/shield.png');
-    this.load.image('damageUp', './assets/damageUp.png');
+    this.load.image('zaku', './assets/sprites/zaku.png');
+    this.load.image('zakuLeft', './assets/sprites/zakuYellowLeft.png');
+    this.load.image('zakuRight', './assets/sprites/zakuYellowRight.png');
+    this.load.image('blueZaku', './assets/sprites/sortaBlueZaku.png');
+    this.load.image('smallShip', './assets/sprites/elmeth.png');
+    this.load.image('bigShip', './assets/sprites/ship.png');
+    this.load.image('bullet', './assets/sprites/bullet.png');
+    this.load.image('beam', './assets/sprites/beam.png');
+    this.load.image('melee', './assets/sprites/wave.png');
+    this.load.image('missile', './assets/sprites/missile.png');
+    this.load.image('bigBall', './assets/sprites/bigBall.png');
+    this.load.image('enemyBullet', './assets/sprites/enemyBullet.png');
+    this.load.image('shield', './assets/sprites/shield.png');
+    this.load.image('damageUp', './assets/sprites/damageUp.png');
 
     this.load.audio('bgm0', './assets/music/bgm0.mp3');
     this.load.audio('bgm1', './assets/music/bgm1.mp3');

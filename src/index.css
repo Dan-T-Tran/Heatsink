@@ -135,7 +135,7 @@ code {
   padding-left: 30px;
   padding-top: 30px;
   /* background-color: gray; */
-  background: url('../public/assets/background.jpg') no-repeat;
+  background: url('../public/assets/backgrounds/background.jpg') no-repeat;
   background-size: cover;
   z-index: 3;
   border: 5px solid rgb(223, 183, 110);
@@ -156,7 +156,7 @@ code {
 #board {
   height: 960px;
   width: 720px;
-  background: url('../public/assets/mistyForest.png') repeat 0 0;
+  background: url('../public/assets/backgrounds/mistyForest.png') repeat 0 0;
   animation: animate 5s infinite;
   animation-timing-function: linear;
 }

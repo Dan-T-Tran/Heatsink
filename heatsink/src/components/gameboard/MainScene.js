@@ -40,6 +40,7 @@ class MainScene extends Phaser.Scene {
     this.enemyInterval = 0;
     this.sounds = {};
     this.circle = null;
+    this.healthCircle = null;
     this.blocking = false;
     this.weapons = [];
     this.weaponsPointer = 0;
@@ -52,6 +53,7 @@ class MainScene extends Phaser.Scene {
     this.enemyHitPierce = this.enemyHitPierce.bind(this);
     this.playerHit = this.playerHit.bind(this);
     this.cooldownCircle = this.cooldownCircle.bind(this);
+    this.healthCircleGenerator = this.healthCircleGenerator.bind(this);
     this.blockHit = this.blockHit.bind(this);
     this.shoot = this.shoot.bind(this);
     this.shootBomb = this.shootBomb.bind(this);
@@ -155,10 +157,6 @@ class MainScene extends Phaser.Scene {
     this.sounds.enemyDeath = this.sound.add('enemyDeath');
 
     for (let i = 0; i <= 7; i++) {
-      if (i === 5) {
-        continue;
-      }
-      console.log(i);
       this.sounds[`bgm${i}`].on('complete', this.randomizeBgm)
     }
     this.randomizeBgm();
@@ -201,6 +199,9 @@ class MainScene extends Phaser.Scene {
     this.blocker = this.physics.add.sprite(this.player.x, this.player.y - 30, 'shield');
     this.blocker.scale = 0.4;
     this.blocker.disableBody(true, true);
+
+    // Set up health circle properties
+    this.healthCircle = this.add.graphics();
 
     // Add groups for components
     this.bullet = this.physics.add.group();
@@ -506,6 +507,15 @@ class MainScene extends Phaser.Scene {
     enemyBullet.destroy();
   }
 
+  healthCircleGenerator() {
+    let health = store.getState().health;
+    let startAngle = Phaser.Math.DegToRad(-90);
+    let finalAngle = Phaser.Math.DegToRad((359.9 * (health / 100) - 90));
+    this.healthCircle.fillStyle(0x9ee6ff, 0.2)
+    this.healthCircle.slice(this.player.x, this.player.y, 50, startAngle, finalAngle, false);
+    this.healthCircle.fillPath();
+  }
+
   cooldownCircle() {
     let cooldown = store.getState().cooldown;
     let startAngle = Phaser.Math.DegToRad(-90);
@@ -517,8 +527,9 @@ class MainScene extends Phaser.Scene {
   }
 
   update() {
-    // Update cooldown indicator around player
+    // Update cooldown indicator and health circle around player
     this.circle.clear();
+    this.healthCircle.clear();
 
     // Prevent game updates once player dies
     if (store.getState().health <= 0) {
@@ -532,6 +543,9 @@ class MainScene extends Phaser.Scene {
         this.sounds.cooldown.play();
       }
     }
+
+    // Update health circle's position with the player
+    this.healthCircleGenerator();
 
     // Update blocker's position with the player
     this.blockMove();

@@ -7,6 +7,7 @@ const heatSchema = new mongoose.Schema({
   name: String,
   score: Number,
   date: String,
+  kills: Number,
   difficulty: Number,
 });
 

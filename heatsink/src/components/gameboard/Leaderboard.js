@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import moment from 'moment';
 
 const Leaderboard = (props) => {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -36,7 +37,17 @@ const Leaderboard = (props) => {
         // topPlayers = null;
         break;
       }
-      topPlayers.push(<h3 key = {i + leaderboard[i].score}>{i + 1} | {leaderboard[i].name} - {leaderboard[i].score} | {leaderboard[i].date.slice(0, 2) + '/' + leaderboard[i].date.slice(3, 5)}</h3>)
+      let date = leaderboard[i].date;
+      topPlayers.push(
+        <tr key={i+leaderboard[i].score}>
+          <td>{i + 1}</td>
+          <td>{leaderboard[i].name}</td>
+          <td>{leaderboard[i].score}</td>
+          <td>{leaderboard[i].kills}</td>
+          <td>{leaderboard[i].difficulty}</td>
+          <td>{moment(date).format('MM[/]DD[/]YY')}</td>
+        </tr>
+      )
     }
     return topPlayers;
   }
@@ -59,8 +70,19 @@ const Leaderboard = (props) => {
         {loading && <h1>Loading top players. . .</h1>}
         {failed && <h1>Failed to retrieve top players.</h1>}
         {!loading && <h1><u>Top {(page + 1) * 10} players</u></h1>}
-        {!loading && <h2>Position | Name | Score | Date</h2>}
-        {renderLeaderboard()}
+        {!loading &&
+          <table className='leaderboard-table'>
+            <tr>
+              <th>Position</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Kills</th>
+              <th>Difficulty</th>
+              <th>Date</th>
+            </tr>
+            {renderLeaderboard()}
+          </table>
+        }
       </div>
       <div className='leaderboard-buttons'>
         {page > 0 && <button className='leaderboard-button' name='back' onClick={handlePage}>Previous 10</button>}

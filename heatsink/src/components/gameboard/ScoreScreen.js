@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import store from '../../store';
 import axios from 'axios';
 import audio from '../../assets/gameOver.mp3'
-import moment from 'moment';
 
 const ScoreScreen = () => {
   const [name, setName] = useState('');
   const score = useSelector((state) => state.score);
+  const kills = useSelector((state) => state.kills);
   const difficulty = useSelector((state) => state.difficulty);
   const dispatch = useDispatch();
   const [pointer, setPointer] = useState([0, 0]);
@@ -53,7 +52,8 @@ const ScoreScreen = () => {
     const data = {
       name: name,
       score: score,
-      date: moment().format('MM DD YYYY'),
+      kills: kills,
+      date: new Date(),
       difficulty: difficulty
     }
 

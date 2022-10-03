@@ -10,8 +10,8 @@ const getScores = async (req, res) => {
 };
 
 const postScore = async (req, res) => {
-  const { name, score, date, difficulty } = req.body;
-  const document = await post({ name, score, date, difficulty });
+  const { name, score, date, kills, difficulty } = req.body;
+  const document = await post({ name, score, date, kills, difficulty });
   if (document) {
     res.status(201).send(document);
   } else {

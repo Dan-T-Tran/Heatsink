@@ -229,6 +229,11 @@ code {
   border: 1px solid black;
 }
 
+.leaderboard-table {
+  margin: 0 auto;
+  border-spacing: 20px;
+}
+
 .leaderboard-buttons {
   display: flex;
   flex-direction: row;

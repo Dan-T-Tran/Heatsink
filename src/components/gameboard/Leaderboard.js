@@ -39,14 +39,16 @@ const Leaderboard = (props) => {
       }
       let date = leaderboard[i].date;
       topPlayers.push(
-        <tr key={i+leaderboard[i].score}>
-          <td>{i + 1}</td>
-          <td>{leaderboard[i].name}</td>
-          <td>{leaderboard[i].score}</td>
-          <td>{leaderboard[i].kills}</td>
-          <td>{leaderboard[i].difficulty}</td>
-          <td>{moment(date).format('MM[/]DD[/]YY')}</td>
-        </tr>
+        <tbody key={i+leaderboard[i].score}>
+          <tr>
+            <td>{i + 1}</td>
+            <td>{leaderboard[i].name}</td>
+            <td>{leaderboard[i].score}</td>
+            <td>{leaderboard[i].kills}</td>
+            <td>{leaderboard[i].difficulty}</td>
+            <td>{moment(date).format('MM[/]DD[/]YY')}</td>
+          </tr>
+        </tbody>
       )
     }
     return topPlayers;
@@ -72,14 +74,16 @@ const Leaderboard = (props) => {
         {!loading && <h1><u>Top {(page + 1) * 10} players</u></h1>}
         {!loading &&
           <table className='leaderboard-table'>
-            <tr>
-              <th>Position</th>
-              <th>Name</th>
-              <th>Score</th>
-              <th>Kills</th>
-              <th>Difficulty</th>
-              <th>Date</th>
-            </tr>
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Kills</th>
+                <th>Difficulty</th>
+                <th>Date</th>
+              </tr>
+            </thead>
             {renderLeaderboard()}
           </table>
         }

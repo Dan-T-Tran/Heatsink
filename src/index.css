@@ -70,6 +70,41 @@ code {
   border: 1px solid black;
 }
 
+.start-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.start-screen-image {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.start-screen-button {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 200px;
+  font-size: 50px;
+  animation: color-rotation 15s infinite;
+}
+
+@keyframes color-rotation {
+  from, to { background-color: hsl(324, 70%, 45%); }
+  10%      { background-color: hsl(360, 65%, 45%); }
+  20%      { background-color: hsl( 36, 80%, 45%); }
+  30%      { background-color: hsl( 72, 75%, 35%); }
+  40%      { background-color: hsl(108, 65%, 35%); }
+  50%      { background-color: hsl(144, 75%, 35%); }
+  60%      { background-color: hsl(180, 75%, 35%); }
+  70%      { background-color: hsl(216, 60%, 45%); }
+  80%      { background-color: hsl(252, 65%, 50%); }
+  90%      { background-color: hsl(288, 60%, 40%); }
+}
+
 .title-screen {
   display: flex;
   flex-direction: column;

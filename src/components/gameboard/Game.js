@@ -1,4 +1,5 @@
 import Board from './Board.js';
+import StartScreen from './StartScreen.js';
 import TitleScreen from './TitleScreen.js';
 import Leaderboard from './Leaderboard.js';
 import Credits from './Credits.js';
@@ -21,6 +22,9 @@ const Game = () => {
 
   const renderScreen = () => {
     switch(gameState) {
+      case 'start':
+        return (<StartScreen />)
+        break;
       case 'title':
         return (<TitleScreen titleBgm={titleBgm}/>);
         break;

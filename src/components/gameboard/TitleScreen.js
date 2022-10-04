@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 const TitleScreen = (props) => {
   const dispatch = useDispatch();

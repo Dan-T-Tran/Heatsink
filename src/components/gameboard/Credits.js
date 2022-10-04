@@ -21,11 +21,12 @@ const Credits = () => {
       <p><u>Undertaker</u> by IZMIZM</p>
       <p><u>Player's Score</u> from Touhou 10: Mountain of Faith</p>
       <p>Sound effects from Touhou 11: Subterranean Animism and Touhou 9.5: Shoot the Bullet</p>
-      <h1>Sprites</h1>
+      <h1>Images</h1>
       <p>Gundam + Zaku sprites from <a href='http://shrines.rpgclassics.com/snes/msgcd/sprites.shtml'>shrines.rpgclassics.com</a></p>
       <p>Some bullet sprites from <a href='https://opengameart.org/content/bullet-collection-2-m484-games'>opengameart.org</a></p>
       <p>Other bullet sprites from Google Images</p>
       <p>Forest background from <a href='https://www.istockphoto.com/vector/seamless-green-forest-gm583853510-99933785'>istockphoto.com</a></p>
+      <p>Gundam start screen image from <a href='https://www.gunpla101.com/review-rg-nu-gundam-fin-funnel-effect-version/'></a>Gunplay101.com</p>
       <h1>Inspiration</h1>
       <p>Touhou Project</p>
       <p>Ikaruga</p>

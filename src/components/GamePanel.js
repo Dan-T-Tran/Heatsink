@@ -9,7 +9,7 @@ const GamePanel = () => {
   const hiddenPlaceholder = useRef(null);
 
   const handleEnableGame = () => {
-    dispatch({type: 'screen', payload: 'title'});
+    dispatch({type: 'screen', payload: 'start'});
   }
 
   const handlePlaceholder = () => {

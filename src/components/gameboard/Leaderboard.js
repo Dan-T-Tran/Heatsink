@@ -16,7 +16,7 @@ const Leaderboard = (props) => {
     }
 
     async function fetchData() {
-      const results = await axios.get(`ec2-54-215-58-97.us-west-1.compute.amazonaws.com:5000/heatsink`)
+      const results = await axios.get(`http://ec2-54-215-58-97.us-west-1.compute.amazonaws.com:5000/heatsink`)
       if (!results) {
         setFailed(true);
       } else {

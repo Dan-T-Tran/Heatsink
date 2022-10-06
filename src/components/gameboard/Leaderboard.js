@@ -16,7 +16,7 @@ const Leaderboard = (props) => {
     }
 
     async function fetchData() {
-      const results = await axios.get(`http://${process.env.REACT_APP_AWS_URI}/heatsink`)
+      const results = await axios.get(`http://54.215.58.97:5000/heatsink`)
       if (!results) {
         setFailed(true);
       } else {

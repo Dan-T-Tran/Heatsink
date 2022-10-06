@@ -6,18 +6,17 @@ import Credits from './Credits.js';
 import Sideview from './Sideview.js';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import audio from '../../assets/titleScreen.mp3';
+import audio from '../../assets/titleScreen.mp3';
 
 const Game = () => {
   const gameState = useSelector((state) => state.gameState)
   const dispatch = useDispatch();
-  // const [titleBgm] = useState(new Audio(audio));
-  const titleBgm = null;
+  const [titleBgm] = useState(new Audio(audio));
 
   useEffect(() => {
     return function cleanUp() {
-      // titleBgm.currentTime = 0;
-      // titleBgm.pause();
+      titleBgm.currentTime = 0;
+      titleBgm.pause();
     }
   }, [])
 

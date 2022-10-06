@@ -11,9 +11,9 @@ const Leaderboard = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // if (props.titleBgm.paused) {
-    //   props.titleBgm.play();
-    // }
+    if (props.titleBgm.paused) {
+      props.titleBgm.play();
+    }
 
     async function fetchData() {
       const results = await axios.get('/heatsink')

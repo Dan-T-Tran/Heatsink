@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-// import audio from '../../assets/gameOver.mp3'
+import audio from '../../assets/gameOver.mp3'
 
 const ScoreScreen = () => {
   const [name, setName] = useState('');
@@ -10,7 +10,7 @@ const ScoreScreen = () => {
   const difficulty = useSelector((state) => state.difficulty);
   const dispatch = useDispatch();
   const [pointer, setPointer] = useState([0, 0]);
-  // const [gameOver] = useState(new Audio(audio));
+  const [gameOver] = useState(new Audio(audio));
   const [tip, setTip] = useState(0);
   const [fail, setFail] = useState(false);
 
@@ -26,17 +26,17 @@ const ScoreScreen = () => {
   ];
 
   useEffect(() => {
-    // gameOver.play();
-    // gameOver.addEventListener('ended', () => {
-    //   gameOver.currentTime = 0;
-    //   gameOver.play();
-    // }, false);
+    gameOver.play();
+    gameOver.addEventListener('ended', () => {
+      gameOver.currentTime = 0;
+      gameOver.play();
+    }, false);
     let randomizer = Math.floor(Math.random() * tips.length);
     setTip(randomizer);
 
     return function cleanUp() {
-      // gameOver.currentTime = 0;
-      // gameOver.pause();
+      gameOver.currentTime = 0;
+      gameOver.pause();
     }
   }, [])
 

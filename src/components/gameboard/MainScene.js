@@ -22,7 +22,8 @@ class MainScene extends Phaser.Scene {
     this.speed = 300;
     this.player = null;
     this.blocker = null;
-    this.invulnerable = 0;
+    this.invulnerable = false;
+    this.invulnerableTimer = null;
     this.buttons = null;
     this.bullet = null;
     this.pierceBullet = null;
@@ -31,7 +32,7 @@ class MainScene extends Phaser.Scene {
     this.reloadTimer = null;
     this.cooldown = 0;
     this.enemies = [];
-    this.enemyInterval = 0;
+    // this.enemyInterval = 0;
     this.sounds = {};
     this.circle = null;
     this.healthCircle = null;
@@ -43,6 +44,8 @@ class MainScene extends Phaser.Scene {
     this.damageUpCounter = 60;
     this.bgmRepeat = -1;
     this.particles = null;
+    this.enemySpawned = false;
+    this.enemySpawnTimer = null;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.enemyHitPierce = this.enemyHitPierce.bind(this);
@@ -56,6 +59,7 @@ class MainScene extends Phaser.Scene {
     this.getDamageUp = this.getDamageUp.bind(this);
     this.checkDamageUp = this.checkDamageUp.bind(this);
     this.randomizeBgm = this.randomizeBgm.bind(this);
+    this.spawnEnemies = this.spawnEnemies.bind(this);
   }
 
   preload() {
@@ -349,7 +353,7 @@ class MainScene extends Phaser.Scene {
     enemyBullet.disableBody(true, true);
     enemyBullet.destroy();
 
-    if (this.invulnerable > 0) {
+    if (this.invulnerable) {
       return;
     }
 
@@ -357,8 +361,17 @@ class MainScene extends Phaser.Scene {
     let damage = ((enemyBullet.damage * (state.heat ** 1.15) * ((state.difficulty ** 1.15) / state.difficulty)) * ((state.damageUp + 1) / ((state.damageUp + 1) ** 1.2)))
     if (state.health - damage > 0) {
       this.sounds.damage.play();
-      this.invulnerable = 200;
+      // this.invulnerable = 200;
       this.player.alpha = 0.5;
+      this.invulnerable = true;
+      this.invulnerableTimer = this.time.addEvent({
+        delay: 1200,
+        callback: (() => {
+          this.invulnerable = false;
+          this.sounds.invulnerability.play();
+          this.player.alpha = 1;
+        })
+      })
     }
 
     store.dispatch({type: 'hurt', payload: damage });
@@ -441,7 +454,19 @@ class MainScene extends Phaser.Scene {
       return;
     }
 
-    this.invulnerable = 200;
+    if (this.invulnerableTimer) {
+      this.invulnerableTimer.remove();
+    }
+    this.player.alpha = 0.5;
+    this.invulnerable = true;
+    this.invulnerableTimer = this.time.addEvent({
+      delay: 600,
+      callback: (() => {
+        this.invulnerable = false;
+        this.sounds.invulnerability.play();
+        this.player.alpha = 1;
+      })
+    })
 
     switch(this.weapons[this.weaponsPointer]()) {
       case 'Normal':
@@ -538,6 +563,30 @@ class MainScene extends Phaser.Scene {
     this.circle.strokePath();
   }
 
+  spawnEnemies(difficulty) {
+    this.enemySpawned = true;
+
+    let enemyInterval = Math.floor(Math.random() * 1500 + 1000 - (difficulty * 8));
+    for (let i = 0; i < Math.floor(Math.random() * 15 + 5 + ((difficulty) / 4) ** 1.05); i++) {
+      let randomizer = Math.floor(Math.random() * this.enemies.length);
+      let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
+
+      let randomChecker = (enemy.weight * (difficulty / (difficulty ** 1.2)) * Math.random());
+      if (randomChecker < 0.1) {
+        i += enemy.weight;
+      } else {
+        enemy.destroy();
+        randomChecker += 0.025
+        i--;
+      }
+    }
+
+    this.enemySpawnTimer = this.time.addEvent({
+      delay: enemyInterval,
+      callback: (() => this.enemySpawned = false),
+    });
+  }
+
   update() {
     let state = store.getState();
     // Update cooldown indicator and health circle around player
@@ -570,14 +619,14 @@ class MainScene extends Phaser.Scene {
     }
 
     // Timer for invulnerability
-    if (this.invulnerable > 0) {
-      this.invulnerable--;
-      if (this.invulnerable <= 0) {
-        this.sounds.invulnerability.play();
-        this.invulnerable = false;
-        this.player.alpha = 1;
-      }
-    }
+    // if (this.invulnerable > 0) {
+    //   this.invulnerable--;
+    //   if (this.invulnerable <= 0) {
+    //     this.sounds.invulnerability.play();
+    //     this.invulnerable = false;
+    //     this.player.alpha = 1;
+    //   }
+    // }
 
     // Move the player. If no arrow keys pressed, stop movement.
     // While shift is held, slow movement
@@ -630,29 +679,34 @@ class MainScene extends Phaser.Scene {
     }
 
     // Trigger enemies at some random interval
-    if (this.enemyInterval > 0) {
-      this.enemyInterval--;
-    } else {
-      let difficulty = state.difficulty;
-      this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (difficulty / 2));
-      for (let i = 0; i < Math.floor(Math.random() * 15 + 5 + ((difficulty) / 4) ** 1.05); i++) {
-        let randomizer = Math.floor(Math.random() * this.enemies.length);
-        let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
+    // if (this.enemyInterval > 0) {
+    //   this.enemyInterval--;
+    // } else {
+    //   let difficulty = state.difficulty;
+    //   this.enemyInterval = Math.floor(Math.random() * 200 + 200 - (difficulty / 2));
+    //   for (let i = 0; i < Math.floor(Math.random() * 15 + 5 + ((difficulty) / 4) ** 1.05); i++) {
+    //     let randomizer = Math.floor(Math.random() * this.enemies.length);
+    //     let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
 
-        let randomChecker = (enemy.weight * (difficulty / (difficulty ** 1.2)) * Math.random());
-        if (randomChecker < 0.1) {
-          i += enemy.weight;
-        } else {
-          enemy.destroy();
-          difficulty += 0.5
-          i--;
-        }
-      }
+    //     let randomChecker = (enemy.weight * (difficulty / (difficulty ** 1.2)) * Math.random());
+    //     if (randomChecker < 0.1) {
+    //       i += enemy.weight;
+    //     } else {
+    //       enemy.destroy();
+    //       difficulty += 0.5
+    //       i--;
+    //     }
+    //   }
+    // }
+
+    if (!this.enemySpawned) {
+      this.spawnEnemies(state.difficulty);
     }
 
     // Trigger enemies sooner if there's too few enemies on screen
-    if (this.enemy.children.entries.length <= (5 + (state.difficulty / 3)) * (state.heat) && this.enemyInterval > 80) {
-      this.enemyInterval = 30;
+    if (this.enemy.children.entries.length <= (5 + (state.difficulty / 3)) * (state.heat)) {
+      this.enemySpawnTimer.remove();
+      this.spawnEnemies(state.difficulty);
     }
   }
 }

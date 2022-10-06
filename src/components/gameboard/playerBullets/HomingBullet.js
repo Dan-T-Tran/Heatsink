@@ -8,7 +8,7 @@ class HomingBullet extends Bullet {
     this.body.sourceWidth = 9;
     this.body.sourceHeight = 16;
     this.scale = config.keydown ? 1.75 : 1;
-    this.damage = config.keyDown ? 10 : 7;
+    this.damage = config.keyDown ? 9 : 6;
     this.acceleration = 0;
     this.prep = true;
     this.stop = false;

@@ -35,6 +35,7 @@ const TitleScreen = (props) => {
           <p>As you gain heat, your attacks become stronger and you get more points, but you will also take more damage!</p>
           <p>Every 60 enemies destroyed drops a booster that increases your damage for this run.</p>
           <p>Difficulty increases every 15 seconds. Get as many points as you can before you get overwhelmed!</p>
+          <h4>If the leaderboard doesn't work, you'll have to enable "Insecure Content" to the left of your browser's address bar.</h4>
         </div>
       </div>
       <div className='title-buttons'>

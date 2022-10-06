@@ -13,7 +13,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     this.angle = Phaser.Math.RadToDeg(Phaser.Math.Angle.Between(this.x, this.y, this.x + this.dx, this.y + this.dy)) + 90;
 
     const timer = config.scene.time.addEvent({
-      delay: 6000,
+      delay: 3500,
       callback: (() => this.destroy()),
     });
 

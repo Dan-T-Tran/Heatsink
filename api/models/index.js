@@ -2,6 +2,7 @@ const db = require('../db');
 
 const get = async () => {
   const documents = await db.find().sort({score: 'desc'});
+  console.log('MAYBE HERE? ', documents);
   return documents;
 };
 

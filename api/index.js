@@ -22,8 +22,8 @@ app.get('/heatsink', getScores);
 
 app.post('/heatsink', postScore);
 
-// app.listen(port, () => {
-//   console.log(`Listening on port ${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
 
 module.exports = app;

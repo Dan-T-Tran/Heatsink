@@ -26,7 +26,7 @@ const Credits = () => {
       <p>Some bullet sprites from <a href='https://opengameart.org/content/bullet-collection-2-m484-games'>opengameart.org</a></p>
       <p>Other bullet sprites from Google Images</p>
       <p>Forest background from <a href='https://www.istockphoto.com/vector/seamless-green-forest-gm583853510-99933785'>istockphoto.com</a></p>
-      <p>Gundam start screen image from <a href='https://www.gunpla101.com/review-rg-nu-gundam-fin-funnel-effect-version/'></a>Gunplay101.com</p>
+      {/* <p>Gundam start screen image from <a href='https://www.gunpla101.com/review-rg-nu-gundam-fin-funnel-effect-version/'></a>Gunplay101.com</p> */}
       <h1>Inspiration</h1>
       <p>Touhou Project</p>
       <p>Ikaruga</p>

@@ -17,18 +17,18 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
       callback: (() => this.destroy()),
     });
 
-    let particles = config.scene.add.particles('enemyBullet');
-    let emitter = particles.createEmitter({
-      speed: 5,
-      lifespan: 500,
-      scale: { start: 0, end: 0 },
-      blendMode: 'ADD',
-    })
-    emitter.startFollow(this);
+    // let particles = config.scene.add.particles('enemyBullet');
+    // let emitter = particles.createEmitter({
+    //   speed: 5,
+    //   lifespan: 500,
+    //   scale: { start: 0, end: 0 },
+    //   blendMode: 'ADD',
+    // })
+    // emitter.startFollow(this);
     this.on('destroy', () => {
       timer.remove();
-      emitter.scaleX.start = 0.25;
-      emitter.explode(150);
+      // emitter.scaleX.start = 0.25;
+      // emitter.explode(150);
     });
   };
 };

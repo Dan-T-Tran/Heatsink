@@ -41,7 +41,7 @@ const ScoreScreen = () => {
   }, [])
 
   const handleChange = (e) => {
-    setName(e.target.value);
+    setName(e.target.value.toString());
   }
 
   const handleSubmit = async (e) => {
@@ -59,7 +59,7 @@ const ScoreScreen = () => {
       difficulty: difficulty
     }
 
-    await axios.post(`ec2-54-215-58-97.us-west-1.compute.amazonaws.com:5000/heatsink`, data)
+    await axios.post(process.env.REACT_APP_AWS_URI, data)
     .then((response) => dispatch({ type: 'screen', payload: 'leaderboard' }))
     .catch((err) => {
       setFail(true);

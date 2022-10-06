@@ -378,9 +378,10 @@ class MainScene extends Phaser.Scene {
       this.time.addEvent({
         delay: 1000,
         callback: (() => {
-          for (let i = 0; i <= 7; i++) {
-            this.sounds[`bgm${i}`].stop();
-          }
+          // for (let i = 0; i <= 7; i++) {
+            // this.sounds[`bgm${i}`].stop();
+          // }
+          this.sounds.bgm0.stop();
           store.dispatch({type:'screen', payload: 'scoreScreen'})
         })
       });

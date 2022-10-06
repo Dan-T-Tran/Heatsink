@@ -8,8 +8,8 @@ const Board = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // props.titleBgm.currentTime = 0;
-    // props.titleBgm.pause();
+    props.titleBgm.currentTime = 0;
+    props.titleBgm.pause();
     dispatch({type: 'initialize'});
 
     const game = RenderGame();

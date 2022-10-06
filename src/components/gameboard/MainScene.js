@@ -83,14 +83,14 @@ class MainScene extends Phaser.Scene {
     this.load.image('shield', './assets/sprites/shield.png');
     this.load.image('damageUp', './assets/sprites/damageUp.png');
 
-    this.load.audio('bgm0', './assets/music/bgm0.mp3');
-    this.load.audio('bgm1', './assets/music/bgm1.mp3');
-    this.load.audio('bgm2', './assets/music/bgm2.mp3');
-    this.load.audio('bgm3', './assets/music/bgm3.mp3');
-    this.load.audio('bgm4', './assets/music/bgm4.mp3');
-    this.load.audio('bgm5', './assets/music/bgm5.mp3');
-    this.load.audio('bgm6', './assets/music/bgm6.mp3');
-    this.load.audio('bgm7', './assets/music/bgm7.mp3');
+    // this.load.audio('bgm0', './assets/music/bgm0.mp3');
+    // this.load.audio('bgm1', './assets/music/bgm1.mp3');
+    // this.load.audio('bgm2', './assets/music/bgm2.mp3');
+    // this.load.audio('bgm3', './assets/music/bgm3.mp3');
+    // this.load.audio('bgm4', './assets/music/bgm4.mp3');
+    // this.load.audio('bgm5', './assets/music/bgm5.mp3');
+    // this.load.audio('bgm6', './assets/music/bgm6.mp3');
+    // this.load.audio('bgm7', './assets/music/bgm7.mp3');
 
     this.load.audio('damage', './assets/sound/se_tan00.wav');
     this.load.audio('shoot', './assets/sound/se_plst00.wav');
@@ -127,14 +127,14 @@ class MainScene extends Phaser.Scene {
     this.buttons.addKey(Phaser.Input.Keyboard.KeyCodes.Z); //90
 
     // Add sounds
-    this.sounds.bgm0 = this.sound.add('bgm0');
-    this.sounds.bgm1 = this.sound.add('bgm1');
-    this.sounds.bgm2 = this.sound.add('bgm2');
-    this.sounds.bgm3 = this.sound.add('bgm3');
-    this.sounds.bgm4 = this.sound.add('bgm4');
-    this.sounds.bgm5 = this.sound.add('bgm5');
-    this.sounds.bgm6 = this.sound.add('bgm6');
-    this.sounds.bgm7 = this.sound.add('bgm7');
+    // this.sounds.bgm0 = this.sound.add('bgm0');
+    // this.sounds.bgm1 = this.sound.add('bgm1');
+    // this.sounds.bgm2 = this.sound.add('bgm2');
+    // this.sounds.bgm3 = this.sound.add('bgm3');
+    // this.sounds.bgm4 = this.sound.add('bgm4');
+    // this.sounds.bgm5 = this.sound.add('bgm5');
+    // this.sounds.bgm6 = this.sound.add('bgm6');
+    // this.sounds.bgm7 = this.sound.add('bgm7');
 
     this.sounds.damage = this.sound.add('damage');
     this.sounds.shoot = this.sound.add('shoot');
@@ -155,10 +155,10 @@ class MainScene extends Phaser.Scene {
     this.sounds.enemyDamage = this.sound.add('enemyDamage');
     this.sounds.enemyDeath = this.sound.add('enemyDeath');
 
-    for (let i = 0; i <= 7; i++) {
-      this.sounds[`bgm${i}`].on('complete', this.randomizeBgm)
-    }
-    this.randomizeBgm();
+    // for (let i = 0; i <= 7; i++) {
+    //   this.sounds[`bgm${i}`].on('complete', this.randomizeBgm)
+    // }
+    // this.randomizeBgm();
 
     this.weapons.push(Normal);
     this.weapons.push(Beam);
@@ -244,15 +244,15 @@ class MainScene extends Phaser.Scene {
     });
   }
 
-  randomizeBgm() {
-    let randomizer = Math.floor(Math.random() * 8);
-    if (randomizer === this.bgmRepeat) {
-      this.randomizeBgm();
-    } else {
-      this.bgmRepeat = randomizer;
-      this.sounds[`bgm${randomizer}`].play();
-    }
-  };
+  // randomizeBgm() {
+  //   let randomizer = Math.floor(Math.random() * 8);
+  //   if (randomizer === this.bgmRepeat) {
+  //     this.randomizeBgm();
+  //   } else {
+  //     this.bgmRepeat = randomizer;
+  //     this.sounds[`bgm${randomizer}`].play();
+  //   }
+  // };
 
   enemyHit(enemy, bullet) {
     let state = store.getState();

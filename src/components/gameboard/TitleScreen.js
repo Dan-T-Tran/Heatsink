@@ -4,12 +4,12 @@ import { useEffect } from 'react';
 const TitleScreen = (props) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    // props.titleBgm.play();
+    props.titleBgm.play();
 
-    // props.titleBgm.addEventListener('ended', () => {
-    //   props.titleBgm.currentTime = 0;
-    //   props.titleBgm.play();
-    // }, false);
+    props.titleBgm.addEventListener('ended', () => {
+      props.titleBgm.currentTime = 0;
+      props.titleBgm.play();
+    }, false);
   }, [])
 
   const handleButton = (e) => {

@@ -18,9 +18,9 @@ app.use((req, res, next) => {
 //   res.sendFile(path.join(__dirname, '../public', 'index.html'))
 // })
 
-app.get('/heatsink', getScores);
+app.get('/api/heatsink', getScores);
 
-app.post('/heatsink', postScore);
+app.post('/api/heatsink', postScore);
 
 // app.listen(port, () => {
 //   console.log(`Listening on port ${port}`);

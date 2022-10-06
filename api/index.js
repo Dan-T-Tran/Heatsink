@@ -14,16 +14,16 @@ app.use(express.static(path.join(__dirname, '..//public')));
 //   res.sendFile(path.join(__dirname, "..", "heatsink", "build", "index.html"));
 // });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public', 'index.html'))
-})
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../public', 'index.html'))
+// })
 
 app.get('/heatsink', getScores);
 
 app.post('/heatsink', postScore);
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Listening on port ${port}`);
+// });
 
 module.exports = app;

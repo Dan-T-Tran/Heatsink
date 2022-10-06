@@ -3,6 +3,7 @@ const { get, post } = require('../models');
 const getScores = async (req, res) => {
   const documents = await get();
   if (documents) {
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).send(documents);
   } else {
     res.sendStatus(500);

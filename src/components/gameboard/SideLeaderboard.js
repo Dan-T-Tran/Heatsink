@@ -6,7 +6,7 @@ const SideLeaderboard = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const results = await axios.get('/heatsink')
+      const results = await axios.get(`http://${process.env.REACT_APP_AWS_URI}/heatsink`)
       setLeaderboard(results.data);
     }
     fetchData();

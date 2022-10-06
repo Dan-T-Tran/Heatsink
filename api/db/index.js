@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 
 // mongoose.connect('mongodb://localhost:27017/heatsink', {useNewUrlParser: true, useUnifiedTopology: true});
 
-mongoose.connect(`mongodb+srv://${process.env.DBUSERNAME}:${process.env.DBPASSWORD}@heatsink-cluster.efwwkwt.mongodb.net/?retryWrites=true&w=majority
-`, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.REACT_APP_MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
 
 const db = mongoose.connection;

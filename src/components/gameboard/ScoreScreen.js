@@ -59,7 +59,7 @@ const ScoreScreen = () => {
       difficulty: difficulty
     }
 
-    await axios.post(process.env.REACT_APP_AWS_URI, data)
+    await axios.post('/heatsink', data)
     .then((response) => dispatch({ type: 'screen', payload: 'leaderboard' }))
     .catch((err) => {
       setFail(true);

@@ -7,6 +7,10 @@ const { getScores, postScore } = require('./controllers');
 
 app.use(express.json());
 
+app.get('', (req, res) => {
+  res.send('Hello');
+})
+
 // app.use(express.static(path.join(__dirname, '..//build')));
 // app.use(express.static(path.join(__dirname, '..//public')));
 

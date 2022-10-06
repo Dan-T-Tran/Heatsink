@@ -30,7 +30,7 @@ const Homing = (scene, x, y, heat, keyDown) => {
   }
 
 
-  return 90;
+  return 500;
 }
 
 export default Homing;

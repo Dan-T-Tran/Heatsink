@@ -10,20 +10,23 @@ class HomingBullet extends Bullet {
     this.scale = config.keydown ? 1.75 : 1;
     this.damage = config.keyDown ? 10 : 7;
     this.acceleration = 0;
-    this.prep = 100;
-    this.stop = 45;
+    this.prep = true;
+    this.stop = false;
+    config.scene.time.addEvent({
+      delay: 450,
+      callback: (() => this.prep = false)
+    })
+    config.scene.time.addEvent({
+      delay: 1450,
+      callback: (() => this.stop = true)
+    })
   }
 
   preUpdate(time, delta) {
-    if (this.prep > 0) {
-      this.prep--;
+    if (this.prep || this.stop) {
       return;
     }
 
-    this.stop--;
-    if (this.stop <= 0) {
-      return;
-    }
     this.acceleration++;
     let closestEnemy = this.scene.physics.closest(this, this.scene.enemy.children.entries);
     if (!closestEnemy) {

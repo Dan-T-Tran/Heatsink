@@ -28,7 +28,7 @@ const Normal = (scene, x, y, heat, keyDown) => {
     }
   }
 
-  return 40;
+  return 300;
 }
 
 export default Normal;

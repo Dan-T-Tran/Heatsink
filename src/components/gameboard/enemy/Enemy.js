@@ -9,16 +9,20 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     config.scene.add.existing(this);
     config.scene.enemy.add(this);
 
-    // let particles = config.scene.add.particles('enemyBullet');
-    // let emitter = particles.createEmitter({
-    //   speed: 20,
-    //   scale: { start: 0.3, end: 0 },
-    //   blendMode: 'ADD',
-    // })
-    // emitter.startFollow(this);
-    // this.on('destroy', () => {
-    //   emitter.explode(150);
-    // });
+    let emitter = this.scene.particles.createEmitter({
+      speed: 20,
+      scale: { start: 0, end: 0 },
+      blendMode: 'ADD',
+    })
+    emitter.startFollow(this);
+    this.on('destroy', () => {
+      emitter.scaleX.start = 0.25;
+      emitter.explode(150);
+      this.scene.time.addEvent({
+        delay: 500,
+        callback: (() => emitter.manager.emitters.remove(emitter)),
+      });
+    });
   }
 }
 

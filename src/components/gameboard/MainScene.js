@@ -27,7 +27,8 @@ class MainScene extends Phaser.Scene {
     this.bullet = null;
     this.pierceBullet = null;
     this.bomb = null;
-    this.reload = 0;
+    this.reload = false;
+    this.reloadTimer = null;
     this.cooldown = 0;
     this.enemies = [];
     this.enemyInterval = 0;
@@ -37,10 +38,11 @@ class MainScene extends Phaser.Scene {
     this.blocking = false;
     this.weapons = [];
     this.weaponsPointer = 0;
-    this.weaponSwitch = 0;
+    this.weaponSwitch = false;
     this.difficultyTimer = null;
     this.damageUpCounter = 60;
     this.bgmRepeat = -1;
+    this.particles = null;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.enemyHitPierce = this.enemyHitPierce.bind(this);
@@ -212,8 +214,8 @@ class MainScene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.damageUp, this.getDamageUp);
 
     // Add emitter that follows player for style
-    let particles = this.add.particles('enemyBullet');
-    let emitter = particles.createEmitter({
+    this.particles = this.add.particles('enemyBullet');
+    let emitter = this.particles.createEmitter({
       speed: 20,
       scale: { start: 0.3, end: 0 },
       blendMode: 'ADD',
@@ -379,12 +381,19 @@ class MainScene extends Phaser.Scene {
   }
 
   shoot(heat, damageUp) {
-    if (this.reload > 0) {
+    if (this.reload) {
       return;
     }
+    this.reload = true;
 
-    this.reload = this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, this.buttons.keys[16].isDown);
-    this.reload = (this.reload * (heat / (heat ** 1.35))) * ((damageUp + 1) / ((damageUp + 1) ** 1.1));
+    let reload;
+    reload = this.weapons[this.weaponsPointer](this, this.player.x, this.player.y, heat, this.buttons.keys[16].isDown);
+    reload = (reload * (heat / (heat ** 1.35))) * ((damageUp + 1) / ((damageUp + 1) ** 1.1));
+
+    this.reloadTimer = this.time.addEvent({
+      delay: reload,
+      callback: (() => this.reload = false),
+    });
 
     switch(this.weapons[this.weaponsPointer]()) {
       case 'Normal':
@@ -405,7 +414,7 @@ class MainScene extends Phaser.Scene {
   }
 
   switchWeapon() {
-    if (this.weaponSwitch > 0) {
+    if (this.weaponSwitch) {
       return;
     }
 
@@ -415,8 +424,15 @@ class MainScene extends Phaser.Scene {
     }
 
     this.sounds.switchWeapon.play();
-    this.weaponSwitch = 100;
-    this.reload = 15;
+    this.weaponSwitch = true;
+    this.time.addEvent({
+      delay: 500,
+      callback: (() =>this.weaponSwitch = false),
+    })
+    this.reload = false;
+    if (this.reloadTimer) {
+      this.reloadTimer.remove();
+    }
     store.dispatch( {type:'weaponSwitch', payload:this.weapons[this.weaponsPointer]() })
   }
 
@@ -595,12 +611,12 @@ class MainScene extends Phaser.Scene {
       }
     }
 
-    if (this.reload > 0) {
-      this.reload--;
-    }
-    if (this.weaponSwitch > 0) {
-      this.weaponSwitch--;
-    }
+    // if (this.reload > 0) {
+    //   this.reload--;
+    // }
+    // if (this.weaponSwitch > 0) {
+    //   this.weaponSwitch--;
+    // }
 
     // Perform appropriate shooting actions on Z and space
     if (this.buttons.keys[90].isDown) {
@@ -624,10 +640,11 @@ class MainScene extends Phaser.Scene {
         let enemy = new this.enemies[randomizer]({ scene: this, difficulty: difficulty });
 
         let randomChecker = (enemy.weight * (difficulty / (difficulty ** 1.2)) * Math.random());
-        if (randomChecker < 0.08) {
+        if (randomChecker < 0.1) {
           i += enemy.weight;
         } else {
           enemy.destroy();
+          difficulty += 0.5
           i--;
         }
       }

@@ -34,7 +34,7 @@ const Melee = (scene, x, y, heat, keyDown) => {
     }
   }
 
-  return 80;
+  return 400;
 };
 
 export default Melee;

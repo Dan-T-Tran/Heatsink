@@ -28,7 +28,7 @@ const Beam = (scene, x, y, heat, keyDown) => {
     }
   }
 
-  return 5;
+  return 80;
 };
 
 export default Beam;

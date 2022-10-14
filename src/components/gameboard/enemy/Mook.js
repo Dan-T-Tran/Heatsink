@@ -6,7 +6,7 @@ class Mook extends Enemy {
     super(config);
     this.setPosition(this.x, this.y);
     this.setTexture('zaku');
-    this.health = 20 + ((config.difficulty * 2) ** 1.2);
+    this.health = 20 + (config.difficulty ** 1.2);
     this.score = 200;
     this.weight = 0;
     this.defaultReload = 80;

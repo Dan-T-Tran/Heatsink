@@ -89,11 +89,18 @@ const Leaderboard = (props) => {
         }
       </div>
       <div className='leaderboard-buttons'>
-        {page > 0 && <button className='leaderboard-button' name='back' onClick={handlePage}>Previous 10</button>}
-        {page <= 0 && <button className='leaderboard-button'>At first page</button>}
+        <div className='leaderboard-button-holder'>
+          {page > 0 && <button className='leaderboard-button' name='back' onClick={handlePage}>Previous 10</button>}
+        </div>
         <button className='leaderboard-button' onClick={handleButton}>Back to Title</button>
-        {(page + 1) * 10 < leaderboard.length && <button className='leaderboard-button' name='forward' onClick={handlePage}>Next 10</button>}
-        {(page + 1) * 10 > leaderboard.length && <button className='leaderboard-button'>At last page</button>}
+        <div className='leaderboard-button-holder'>
+          {(page + 1) * 10 < leaderboard.length && <button className='leaderboard-button' name='forward' onClick={handlePage}>Next 10</button>}
+        </div>
+
+        {/* {page <= 0 && <button className='leaderboard-button'>At first page</button>} */}
+
+
+        {/* {(page + 1) * 10 > leaderboard.length && <button className='leaderboard-button'>At last page</button>} */}
       </div>
     </div>
   )

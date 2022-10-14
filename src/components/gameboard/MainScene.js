@@ -41,11 +41,14 @@ class MainScene extends Phaser.Scene {
     this.weaponsPointer = 0;
     this.weaponSwitch = false;
     this.difficultyTimer = null;
-    this.damageUpCounter = 60;
+    this.damageUpCounter = 50;
     this.bgmRepeat = -1;
     this.particles = null;
     this.enemySpawned = false;
     this.enemySpawnTimer = null;
+    this.fpsCheck = new Date();
+    this.fps = null;
+    this.fpsCounter = 50;
 
     this.enemyHit = this.enemyHit.bind(this);
     this.enemyHitPierce = this.enemyHitPierce.bind(this);
@@ -243,6 +246,9 @@ class MainScene extends Phaser.Scene {
       callback: (() => store.dispatch({type: 'difficulty'})),
       repeat: 98
     });
+
+    // Add fps checker
+    this.fps = this.add.text(620, 920, 'FPS: 0', { fontSize: '14px', fill: '#000' });
   }
 
   randomizeBgm() {
@@ -312,7 +318,7 @@ class MainScene extends Phaser.Scene {
 
     let state = store.getState();
 
-    enemy.health -= (bomb.damage * multiplier);
+    enemy.health -= (bomb.damage * multiplier + state.damageUp);
     if (enemy.health > 0) {
       this.sounds.enemyDamage.play();
       this.time.addEvent({
@@ -339,7 +345,7 @@ class MainScene extends Phaser.Scene {
 
   checkDamageUp(enemy) {
     if (this.damageUpCounter <= 0) {
-      this.damageUpCounter = 60;
+      this.damageUpCounter = 50;
       let boundX = enemy.x;
       if (enemy.x <= 50) {
         boundX = 50;
@@ -711,7 +717,20 @@ class MainScene extends Phaser.Scene {
       this.enemySpawnTimer.remove();
       this.spawnEnemies(state.difficulty);
     }
+
+    let newCheck = new Date();
+
+    let fps = 1000 / (newCheck - this.fpsCheck);
+    if (this.fpsCounter <= 0) {
+      this.fps.setText(`FPS: ${Math.trunc(fps)}`)
+      this.fpsCounter = 50;
+    } else {
+      this.fpsCounter--;
+    }
+
+    this.fpsCheck = newCheck;
   }
+
 }
 
 export default MainScene;

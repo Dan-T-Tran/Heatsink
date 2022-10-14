@@ -40,11 +40,13 @@ const TitleScreen = (props) => {
           <p>Press <b>Space</b> to heal and expel heat into a bomb</p>
           <p>Hold <b>Shift</b> to slow down and focus your shots</p>
           <p>As you gain heat, your attacks become stronger and you get more points, but you will also take more damage!</p>
-          <p>Every 60 enemies destroyed drops a booster that increases your damage for this run.</p>
+          <p>Every 50 enemies destroyed drops a booster that increases your damage for this run.</p>
           <p>Difficulty increases every 15 seconds. Get as many points as you can before you get overwhelmed!</p>
           <h4>If the leaderboard doesn't work, you'll have to enable "Insecure Content" to the left of your browser's address bar. If you do, remember to disable it after you finish playing!</h4>
-          <h3>VOLUME</h3>
-          <input type='range' min='0' max='1' step='0.01' defaultValue={volume} onChange={handleVolume}/>
+          <h3 className='volume-slider-label'>VOLUME</h3>
+            <div><input type='range' min='0' max='1' step='0.01' defaultValue={volume} className='volume-slider' onChange={handleVolume}/>
+            <span>{Math.trunc(volume * 100)}%</span>
+          </div>
         </div>
       </div>
       <div className='title-buttons'>
@@ -58,12 +60,3 @@ const TitleScreen = (props) => {
 };
 
 export default TitleScreen;
-
-
-/*
-  import test from './test.mp3';
-  const [audio] = useState(new Audio(test));
-
-  import test from './test.png';
-  <img src={test}></img>
-*/

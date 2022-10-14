@@ -123,6 +123,19 @@ code {
   border: 1px solid black;
 }
 
+.volume-slider-label {
+  margin-bottom: 3px;
+}
+
+.volume-slider {
+  margin-bottom: 0;
+  width: 300px;
+}
+
+.volume-slider:hover {
+  cursor: pointer;
+}
+
 .title-buttons {
   width: 100%;
   display: flex;
@@ -273,6 +286,11 @@ code {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+}
+
+.leaderboard-button-holder {
+  height: 60px;
+  width: 100px;
 }
 
 .leaderboard-button {

@@ -10,7 +10,7 @@ class CircleShooter extends Enemy {
     this.weight = 2;
     this.defaultReload = 250;
     this.reload = this.defaultReload;
-    this.health = 30 + ((config.difficulty * 2) ** 1.2);
+    this.health = 30 + (config.difficulty ** 1.2);
     this.x = (Math.random() * 230 + 270);
     this.y = (Math.random() * -50 - 40);
     this.setVelocity(0, 250)

@@ -11,7 +11,7 @@ class SideLiner extends Enemy {
     this.weight = 0.5;
     this.defaultReload = 220;
     this.reload = this.defaultReload;
-    this.health = 15 + ((config.difficulty * 2) ** 1.2);
+    this.health = 15 + (config.difficulty ** 1.2);
     this.x = this.direction === 1 ? Math.random() * 80 + 20 : Math.random() * 80 + 620;
     this.y = Math.random() * -40 - 60;
     this.setPosition(this.x, this.y);

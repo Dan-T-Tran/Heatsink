@@ -9,7 +9,7 @@ class ConvergeBoss extends Enemy {
     this.setPosition(this.x, this.y);
     this.setTexture('smallShip');
     this.isBoss = true;
-    this.health = this.health = 300 + ((config.difficulty * 2) ** 1.35);
+    this.health = this.health = 300 + (config.difficulty ** 1.35);
     this.score = 4500;
     this.weight = 5;
     this.body.sourceWidth = 47;

@@ -9,7 +9,7 @@ class SpiralBoss extends Enemy {
     this.setPosition(this.x, this.y);
     this.setTexture('bigShip');
     this.isBoss = true;
-    this.health = this.health = 750 + ((config.difficulty * 2) ** 1.5);
+    this.health = this.health = 750 + (config.difficulty ** 1.5);
     this.score = 10000;
     this.weight = 10;
     this.defaultReload = 15;

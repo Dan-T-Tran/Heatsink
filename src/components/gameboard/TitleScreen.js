@@ -1,10 +1,12 @@
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 
 const TitleScreen = (props) => {
   const dispatch = useDispatch();
+  const volume = useSelector((state) => state.volume);
   useEffect(() => {
     props.titleBgm.play();
+    props.titleBgm.volume = volume;
 
     props.titleBgm.addEventListener('ended', () => {
       props.titleBgm.currentTime = 0;
@@ -19,7 +21,12 @@ const TitleScreen = (props) => {
     } else {
       dispatch({type: 'screen', payload: e.target.name});
     }
-  }
+  };
+
+  const handleVolume = (e) => {
+    dispatch({type:'volume', payload: e.target.value});
+    props.titleBgm.volume = e.target.value;
+  };
 
   return (
     <div className='title-screen'>
@@ -36,6 +43,8 @@ const TitleScreen = (props) => {
           <p>Every 60 enemies destroyed drops a booster that increases your damage for this run.</p>
           <p>Difficulty increases every 15 seconds. Get as many points as you can before you get overwhelmed!</p>
           <h4>If the leaderboard doesn't work, you'll have to enable "Insecure Content" to the left of your browser's address bar. If you do, remember to disable it after you finish playing!</h4>
+          <h3>VOLUME</h3>
+          <input type='range' min='0' max='1' step='0.01' defaultValue={volume} onChange={handleVolume}/>
         </div>
       </div>
       <div className='title-buttons'>

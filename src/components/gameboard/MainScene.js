@@ -108,6 +108,9 @@ class MainScene extends Phaser.Scene {
     this.load.audio('death', './assets/sound/se_pldead00.wav');
     this.load.audio('enemyDamage', './assets/sound/se_damage00.wav');
     this.load.audio('enemyDeath', './assets/sound/se_enep00.wav');
+
+    const volume = store.getState().volume;
+    this.sound.volume = volume;
   }
 
   create() {

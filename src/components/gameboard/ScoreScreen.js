@@ -13,6 +13,7 @@ const ScoreScreen = () => {
   const [gameOver] = useState(new Audio(audio));
   const [tip, setTip] = useState(0);
   const [fail, setFail] = useState(false);
+  const volume = useSelector((state) => state.volume);
 
   const tips = [
     `Your blocking cooldown increases as you gain heat.`,
@@ -27,6 +28,7 @@ const ScoreScreen = () => {
 
   useEffect(() => {
     gameOver.play();
+    gameOver.volume = volume;
     gameOver.addEventListener('ended', () => {
       gameOver.currentTime = 0;
       gameOver.play();

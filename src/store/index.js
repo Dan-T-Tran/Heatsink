@@ -9,6 +9,7 @@ const reducerFn = (state = {
   difficulty: 1,
   weapon: 'Normal',
   damageUp: 0,
+  volume: 1,
   gameState: null,
 }, action) => {
   if (action.type === 'initialize') {
@@ -21,7 +22,6 @@ const reducerFn = (state = {
       difficulty: 1,
       weapon: 'Normal',
       damageUp: 0,
-      volume: 1,
       gameState: 'game',
     });
   }
@@ -89,6 +89,10 @@ const reducerFn = (state = {
 
   if (action.type === 'kill') {
     return ({...state, kills: state.kills + 1})
+  }
+
+  if (action.type === 'volume') {
+    return ({...state, volume: action.payload});
   }
 
   return state;
